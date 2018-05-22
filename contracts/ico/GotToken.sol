@@ -16,7 +16,7 @@ contract GotToken is CanReclaimToken, MintableToken, PausableToken {
     uint8 public constant decimals = 18;
 
     /**
-     * @dev Constructor of UacToken that instantiates a new Mintable Pausable Token
+     * @dev Constructor of GotToken that instantiates a new Mintable Pausable Token
      */
     function GotToken() public {
         // token should not be transferrable until after all tokens have been issued

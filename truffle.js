@@ -1,3 +1,9 @@
+//require('dotenv').config();
+require('babel-register')({
+  ignore: /node_modules\/(?!openzeppelin-solidity)/
+});
+require('babel-polyfill');
+
 module.exports = {
   solc: {
     optimizer: {

@@ -2,7 +2,7 @@
  * @title Parkingo token
  *
  * @version 1.0
- * @author Validity Labs AG <info@validitylabs.org>
+ * @author ParkinGO
  */
 pragma solidity ^0.4.19;
 

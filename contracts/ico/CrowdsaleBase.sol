@@ -1,9 +1,9 @@
 /**
  * @title CrowdsaleBase
- * @dev Base crowdsale contract to be inherited by the UacCrowdsale and Reservation contracts.
+ * @dev Base crowdsale contract to be inherited by the GotCrowdsale and Reservation contracts.
  *
  * @version 1.0
- * @author Validity Labs AG <info@validitylabs.org>
+ * @author ParkinGo
  */
 pragma solidity ^0.4.19;
 

@@ -2,7 +2,7 @@
  * @title GotCrowdSale
  *
  * @version 1.0
- * @author Validity Labs AG <info@validitylabs.org>
+ * @author ParkinGo
  */
 pragma solidity ^0.4.19;
 
@@ -27,7 +27,7 @@ contract GotCrowdSale is CrowdsaleBase {
     uint256 public constant TEAM_CAP = 1e6 * 1e18;
     //Advisor allocation
     uint256 public constant ADVISOR_CAP = 0.5e6 * 1e18;
-    //Company liquidity and Airdrop allocation
+    //Company unlocked liquidity and Airdrop allocation
     uint256 public constant PGOUNLOCKED_CAP = 1.5e6 * 1e18;
     //Locked company liquidity
     uint256 public constant PGOLOCKED_CAP = 3.5e6 * 1e18;
@@ -40,14 +40,6 @@ contract GotCrowdSale is CrowdsaleBase {
     uint256 public constant PUBLIC_PRESALE_CAP = 1.35e6 * 1e18;
     //TOTAL ICO CAP
     uint256 public constant TOTAL_MAX_CAP = 2.5e6 * 1e18;                
-
-    // Eidoo interface requires price as tokens/ether, therefore the discounts are presented as bonus tokens.
-    // uint256 public constant BONUS_TIER1 = 108;                           // 8% during first 3 hours
-    // uint256 public constant BONUS_TIER2 = 106;                           // 6% during next 9 hours
-    // uint256 public constant BONUS_TIER3 = 104;                           // 4% during next 30 hours
-    // uint256 public constant BONUS_DURATION_1 = 3 hours;
-    // uint256 public constant BONUS_DURATION_2 = 12 hours;
-    // uint256 public constant BONUS_DURATION_3 = 42 hours;
 
     // uint256 public constant FOUNDERS_VESTING_CLIFF = 1 years;
     // uint256 public constant FOUNDERS_VESTING_DURATION = 2 years;
@@ -98,12 +90,12 @@ contract GotCrowdSale is CrowdsaleBase {
         // Creates founders vault contract
         //foundersVault = new TokenVesting(foundersWallet, END_TIME, FOUNDERS_VESTING_CLIFF, FOUNDERS_VESTING_DURATION, false);
 
-        // Creates Ubiatar Play vault contract
+        // Creates ParkinGo vault contract
         pgoVault = new PGOVault(pgoWallet, address(token), END_TIME);
     }
 
     /**
-     * @dev Mints tokens to be held into the founders and Ubiatar Play vault contracts. Also mints the advisor's tokens to be held into the corresponding wallet.
+     * @dev Mints tokens to be held into the founders and ParkinGo vault contracts. Also mints the advisor's tokens to be held into the corresponding wallet.
      * To be called by the crowdsale's owner only.
      */
     function mintPreAllocatedTokens() public onlyOwner {

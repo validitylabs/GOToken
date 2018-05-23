@@ -1,9 +1,9 @@
 /**
  * @title PGOVault
- * @dev A token holder contract that allows the release of tokens to the UbiatarPlay Wallet.
+ * @dev A token holder contract that allows the release of tokens to the ParkinGo Wallet.
  *
  * @version 1.0
- * @author Validity Labs AG <info@validitylabs.org>
+ * @author ParkinGo
  */
 
 pragma solidity ^0.4.19;
@@ -56,7 +56,7 @@ contract PGOVault {
     }
 
     /**
-     * @dev Transfers vested tokens to ubiatarPlayWallet.
+     * @dev Transfers vested tokens to ParkinGo Wallet.
      */
     function release() public {
         uint256 unreleased = releasableAmount();

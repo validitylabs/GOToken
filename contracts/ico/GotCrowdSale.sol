@@ -12,14 +12,15 @@ import "./CrowdsaleBase.sol";
 //import "./Reservation.sol";
 import "./PGOVault.sol";
 import "./GotToken.sol";
-//import "./PresaleTokenVault.sol";
+import "./PGOMonthlyVault.sol";
+//import "./pgoMonthlyVault.sol";
 
 contract GotCrowdSale is CrowdsaleBase {
 
     /*** CONSTANTS ***/
     uint256 public constant START_TIME = 1527066712;                     // 9 May 2018 09:00:00 GMT
     uint256 public constant END_TIME = 1527068712;                       // 8 June 2018 09:00:00 GMT
-
+    uint256 public constant PRESALE_VAULT_START = END_TIME + 7 days;
     //Token allocation
     //Private presale allocation
     uint256 public constant PRIVATE_PRESALE_CAP = 1e6 * 1e18;
@@ -47,7 +48,7 @@ contract GotCrowdSale is CrowdsaleBase {
     //Reservation public reservation;
 
     // Vesting contracts.
-    //PresaleTokenVault public presaleTokenVault;
+    PGOMonthlyVault public pgoMonthlyVault;
     //TokenVesting public foundersVault;
     PGOVault public pgoVault;
 
@@ -68,6 +69,7 @@ contract GotCrowdSale is CrowdsaleBase {
      * @param _token address contract got tokens.
      * @param _wallet The address where funds should be transferred.
      * @param _pgoWallet The address where token will be send after vesting should be transferred.
+     * @param _pgoMonthlyVault The address of vault contract with monthly unlocking.
      * @param _kycSigners Array of the signers addresses required by the KYCBase constructor, provided by Eidoo.
      * See https://github.com/eidoo/icoengine
      */
@@ -75,6 +77,7 @@ contract GotCrowdSale is CrowdsaleBase {
         address _token,
         address _wallet,
         address _pgoWallet,
+        address _pgoMonthlyVault,
         address[] _kycSigners
     )
         public
@@ -82,7 +85,7 @@ contract GotCrowdSale is CrowdsaleBase {
     {
         token = GotToken(_token);
         //reservation = Reservation(_reservation);
-        //presaleTokenVault = PresaleTokenVault(_presaleTokenVault);
+        pgoMonthlyVault = PGOMonthlyVault(_pgoMonthlyVault);
         //foundersWallet = _foundersWallet;
         //advisorsWallet = _advisorsWallet;
         pgoWallet = _pgoWallet;
@@ -109,18 +112,18 @@ contract GotCrowdSale is CrowdsaleBase {
      * @param beneficiaries Array of the presale investors addresses to whom vested tokens are transferred.
      * @param balances Array of token amount per beneficiary.
      */
-    function initPresaleTokenVault(address[] beneficiaries, uint256[] balances) public onlyOwner {
-        // require(beneficiaries.length == balances.length);
+    function initPGOMonthlyVault(address[] beneficiaries, uint256[] balances) public onlyOwner {
+        require(beneficiaries.length == balances.length);
 
-        // presaleTokenVault.init(beneficiaries, balances, PRESALE_VAULT_START, token);
+        pgoMonthlyVault.init(beneficiaries, balances, PRESALE_VAULT_START, token);
 
-        // uint256 totalPresaleBalance = 0;
-        // uint256 balancesLength = balances.length;
-        // for(uint256 i = 0; i < balancesLength; i++) {
-        //     totalPresaleBalance = totalPresaleBalance.add(balances[i]);
-        // }
+        uint256 totalPresaleBalance = 0;
+        uint256 balancesLength = balances.length;
+        for(uint256 i = 0; i < balancesLength; i++) {
+            totalPresaleBalance = totalPresaleBalance.add(balances[i]);
+        }
 
-        // mintTokens(presaleTokenVault, totalPresaleBalance);
+        mintTokens(pgoMonthlyVault, totalPresaleBalance);
     }
 
     /**

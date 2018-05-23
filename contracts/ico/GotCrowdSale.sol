@@ -10,7 +10,7 @@ import "../../node_modules/openzeppelin-solidity/contracts/token/ERC20/TokenVest
 
 import "./CrowdsaleBase.sol";
 //import "./Reservation.sol";
-//import "./UbiatarPlayVault.sol";
+import "./PGOVault.sol";
 import "./GotToken.sol";
 //import "./PresaleTokenVault.sol";
 
@@ -57,12 +57,12 @@ contract GotCrowdSale is CrowdsaleBase {
     // Vesting contracts.
     //PresaleTokenVault public presaleTokenVault;
     //TokenVesting public foundersVault;
-    //UbiatarPlayVault public ubiatarPlayVault;
+    PGOVault public pgoVault;
 
     // Vesting wallets.
     // address public foundersWallet;
     // address public advisorsWallet;
-    // address public ubiatarPlayWallet;
+    address public pgoWallet;
 
     address public wallet;
 
@@ -75,12 +75,14 @@ contract GotCrowdSale is CrowdsaleBase {
      * @dev Constructor.
      * @param _token address contract got tokens.
      * @param _wallet The address where funds should be transferred.
+     * @param _pgoWallet The address where token will be send after vesting should be transferred.
      * @param _kycSigners Array of the signers addresses required by the KYCBase constructor, provided by Eidoo.
      * See https://github.com/eidoo/icoengine
      */
     function GotCrowdSale(
         address _token,
         address _wallet,
+        address _pgoWallet,
         address[] _kycSigners
     )
         public
@@ -91,13 +93,13 @@ contract GotCrowdSale is CrowdsaleBase {
         //presaleTokenVault = PresaleTokenVault(_presaleTokenVault);
         //foundersWallet = _foundersWallet;
         //advisorsWallet = _advisorsWallet;
-        //ubiatarPlayWallet = _ubiatarPlayWallet;
+        pgoWallet = _pgoWallet;
         wallet = _wallet;
         // Creates founders vault contract
         //foundersVault = new TokenVesting(foundersWallet, END_TIME, FOUNDERS_VESTING_CLIFF, FOUNDERS_VESTING_DURATION, false);
 
         // Creates Ubiatar Play vault contract
-        //ubiatarPlayVault = new UbiatarPlayVault(ubiatarPlayWallet, address(token), END_TIME);
+        pgoVault = new PGOVault(pgoWallet, address(token), END_TIME);
     }
 
     /**
@@ -107,7 +109,7 @@ contract GotCrowdSale is CrowdsaleBase {
     function mintPreAllocatedTokens() public onlyOwner {
         // mintTokens(address(foundersVault), FOUNDERS_CAP);
         // mintTokens(advisorsWallet, ADVISORS_CAP);
-        // mintTokens(address(ubiatarPlayVault), UBIATARPLAY_CAP);
+        mintTokens(address(pgoVault), PGOLOCKED_CAP);
     }
 
     /**

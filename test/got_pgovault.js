@@ -1,5 +1,5 @@
-import {expectThrow, getEvents, BigNumber} from './helpers/tools';
-import {logger} from "./helpers/logger";
+import {expectThrow, waitNDays, getEvents, BigNumber} from './helpers/tools';
+import {logger as log} from "./helpers/logger";
 
 const {ecsign} = require('ethereumjs-util');
 const abi = require('ethereumjs-abi');
@@ -7,6 +7,7 @@ const BN = require('bn.js');
 
 const GotCrowdSale = artifacts.require('./GotCrowdSale.sol');
 const GotToken = artifacts.require('./GotToken.sol');
+const PGOVault = artifacts.require('./PGOVault.sol');
 
 const should = require('chai') // eslint-disable-line
     .use(require('chai-as-promised'))
@@ -57,32 +58,41 @@ const USD_PER_ETHER = 700;
 const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 250 UAC tokens per ether
 
 
-contract('GotCrowdSale',(accounts) => {
-    const owner = accounts[0];
-    const activeInvestor = accounts[1];
+contract('GotPGOVault',(accounts) => {
+  const owner = accounts[0];
+  const activeInvestor = accounts[1];
 
   // Provide gotTokenInstance for every test case
   let gotTokenInstance;
   let gotCrowdSaleInstance;
+  let PGOVaultInstance;
   beforeEach(async () => {
     gotCrowdSaleInstance = await GotCrowdSale.deployed();
     const gotTokenAddress = await gotCrowdSaleInstance.token();
     gotTokenInstance = await GotToken.at(gotTokenAddress);
+    const PGOVaultAddress = await gotCrowdSaleInstance.pgoVault();
+    PGOVaultInstance = await PGOVault.at(PGOVaultAddress);
   });
 
-    it('should instantiate the Crowdsale correctly', async () => {
-        const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-        signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
-    });
-
     it('should have vested pgolocked tokens', async () => {
-        const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-        signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
+        let balance = await PGOVaultInstance.unreleasedAmount();
+        log.info(balance);
     });
 
-    it('should have token ownership', async () => {
-        const gotTokenInstanceOwner = await gotTokenInstance.owner();
-        gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
+    it('should initially have token amount equal to crowdsale locked cap', async () => {
+        const lockedCap = await gotCrowdSaleInstance.PGOLOCKED_CAP();
+        const balance = await PGOVaultInstance.unreleasedAmount();
+        balance.should.equal(lockedCap);
+    });
+
+    it('should increase vested amount after passing time offsets', async () => {
+        const vestedAmount1 = await PGOVaultInstance.vestedAmount();
+        log.info(vestedAmount1);
+        await waitNDays(380);
+
+        const vestedAmount2 = await PGOVaultInstance.vestedAmount();
+        log.info(vestedAmount2);
+        vestedAmount2.should.not.equal(vestedAmount1);
     });
 
 });

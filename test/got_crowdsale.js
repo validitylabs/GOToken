@@ -60,7 +60,6 @@ contract('GotCrowdSale',(accounts) => {
   let gotCrowdSaleInstance;
 
   let internalVaultAddress;
-  let internalVaultInstance;
   let presaleVaultAddress;
   let pgoVaultAddress;
 
@@ -75,13 +74,12 @@ contract('GotCrowdSale',(accounts) => {
       signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
     });
 
-    /*it('should instantiate the internal vault correctly', async () => {
+    it('should instantiate the internal vault correctly', async () => {
       internalVaultAddress = await gotCrowdSaleInstance.pgoMonthlyInternalVault();
-      //internalVaultInstance = await TokenVesting.at();
       const internalVaultBalance = await gotTokenInstance.balanceOf(internalVaultAddress);
 
       internalVaultBalance.should.be.bignumber.equal(INTERNAL_VAULT_CAP);
-    });*/
+    });
 
     it('should instantiate the presale vault correctly', async () => {
       presaleVaultAddress = await gotCrowdSaleInstance.pgoMonthlyPresaleVault();

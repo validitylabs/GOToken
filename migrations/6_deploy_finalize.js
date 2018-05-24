@@ -16,13 +16,13 @@ module.exports = function(deployer, network, accounts) {
 
   //Initialize internal addresses
   const internalAddresses = [internalWallet];
-  const internalBalances = [2.5e6 * 1e18];
+  const internalBalances = [2.5e7 * 1e18];
   //Initialize presale addresses
   const presaleAddresses = [presaleWallet];
-  const presaleBalances = [1.35e6 * 1e18];
+  const presaleBalances = [1.35e7 * 1e18];
   //Initialize reservation addresses
   const reservationAddresses = [reservationWallet];
-  const reservationBalances = [0.8e6 * 1e18];
+  const reservationBalances = [0.8e7 * 1e18];
 
   let gotInstance;
   let gotCrowdSaleInstance;

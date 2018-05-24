@@ -94,10 +94,10 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
 
 * Reservation contract
     * 8.750.000 tokens.
-    * 25% discount
+    * 20% discount
     * Private invitation only
     * Require previous KYC Eidoo verification
-    * 1 Token 0,56 usd
+    * 1 Token 0,6 usd
 * Public ICO
     * 2.750.000 tokens plus all not sold during Reservation contract phase
     * 1 Token 0.75 usd

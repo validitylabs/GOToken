@@ -74,4 +74,9 @@ contract('GotCrowdSale',(accounts) => {
         await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
     });
 
+    it('should have token ownership', async () => {
+      const gotTokenInstanceOwner = await gotTokenInstance.owner();
+      gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
+    });
+    
 });

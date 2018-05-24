@@ -63,7 +63,7 @@ contract GotCrowdSale is CrowdsaleBase {
      * @param _token address contract got tokens.
      * @param _wallet The address where funds should be transferred.
      * @param _pgoLockedLiquidityWallet The address where token will be send after vesting should be transferred.
-     * @param _pgoUnLockedLiquidityWallet The address where token will be send after vesting should be transferred.
+     * @param _pgoUnlockedLiquidityWallet The address where token will be send after vesting should be transferred.
      * @param _pgoMonthlyInternalVault The address of internal funds vault contract with monthly unlocking after 9 months.
      * @param _pgoMonthlyPresaleVault The address of presale funds vault contract with 1/3 free funds and monthly unlocking after 9 months.
      * @param _kycSigners Array of the signers addresses required by the KYCBase constructor, provided by Eidoo.

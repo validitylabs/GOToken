@@ -85,11 +85,8 @@ contract('GotPGOVault',(accounts) => {
 
     it('should increase time to release 2', async () => {
         log.info('[ Vesting starts]');
-
-        //await waitNDays(390);
+        await waitNDays(390);
     });
-
-
 
     it('should release locked liquidity vested tokens 1', async () => {
         //force ico closing 

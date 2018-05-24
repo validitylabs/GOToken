@@ -86,7 +86,7 @@ contract PGOVault {
         }
         return vested;
     }
-
+    
     /**
      * @dev Calculates the amount that has not yet released.
      */

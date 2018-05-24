@@ -64,19 +64,34 @@ contract('GotCrowdSale',(accounts) => {
         signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
     });
 
-    it('should have vested pgolocked tokens', async () => {
-        const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-        signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
-    });
+    // it('should have vested pgolocked tokens', async () => {
+    //     const signer0 = await gotCrowdSaleInstance.kycSigners(0);
+    //     signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
+    // });
 
-    it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
-        const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
-        await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
+    // it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
+    //     const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
+    //     await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
+    // });
+
+    it('should buyTokens ', async () => {
+
+      const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
+      const totalSupply1 = await gotTokenInstance.totalSupply();
+
+      const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
+      gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI});
+
+      const activeInvestorBalance2 = await gotTokenInstance.balanceOf(activeInvestor1);
+      const totalSupply2 = await gotTokenInstance.totalSupply();
+
+      activeInvestorBalance2.should.not.be.bignumber.equal(activeInvestorBalance1);
+      totalSupply2.should.not.be.bignumber.equal(totalSupply1);
     });
 
     it('should have token ownership', async () => {
       const gotTokenInstanceOwner = await gotTokenInstance.owner();
       gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
     });
-    
+
 });

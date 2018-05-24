@@ -16,7 +16,7 @@ contract GotCrowdSale is CrowdsaleBase {
 
     /*** CONSTANTS ***/
     uint256 public constant START_TIME = 1527066712;                     // 9 May 2018 09:00:00 GMT
-    uint256 public constant END_TIME = 1527068712;                       // 8 June 2018 09:00:00 GMT
+    uint256 public constant END_TIME = 1528068712;                       // 8 June 2018 09:00:00 GMT
     //Token allocation
     //Team, founder, partners and advisor cap locked using Monthly Internal Vault
     uint256 public constant MONTHLY_INTERNAL_VAULT_CAP = 2.5e6 * 1e18;

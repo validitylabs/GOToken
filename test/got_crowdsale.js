@@ -69,11 +69,6 @@ contract('GotCrowdSale',(accounts) => {
         signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
     });
 
-    it('should have token ownership', async () => {
-        const gotTokenInstanceOwner = await gotTokenInstance.owner();
-        gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
-    });
-
     it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
         const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
         await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));

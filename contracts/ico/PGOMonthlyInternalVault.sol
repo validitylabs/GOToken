@@ -14,7 +14,7 @@ import "../../node_modules/openzeppelin-solidity/contracts/token/ERC20/SafeERC20
 import "./GotCrowdSale.sol";
 import "./GotToken.sol";
 
-contract PGOMonthlyVault {
+contract PGOMonthlyInternalVault {
     using SafeMath for uint256;
     using SafeERC20 for GotToken;
 
@@ -100,21 +100,12 @@ contract PGOMonthlyVault {
      * @param beneficiary The address that will receive the vested tokens.
      */
     function vestedAmount(address beneficiary) public view returns (uint256) {
-
         uint256 investmentIndex = investorLUT[beneficiary];
-
         uint256 vested = 0;
-
-        if (block.timestamp >= start) {
-            // after start -> 1/3 released (fixed)
-            vested = investments[investmentIndex].totalBalance.div(3);
-        }
         if (block.timestamp >= cliff && block.timestamp < end) {
             // after cliff -> 1/27 of totalBalance every month
-            uint256 unlockedStartBalance = investments[investmentIndex].totalBalance.div(3);
             uint256 totalBalance = investments[investmentIndex].totalBalance;
-            uint256 lockedBalance = totalBalance.sub(unlockedStartBalance);
-            uint256 monthlyBalance = lockedBalance.div(VESTING_DIV_RATE);
+            uint256 monthlyBalance = totalBalance.div(VESTING_DIV_RATE);
             uint256 time = block.timestamp.sub(start);
             uint256 elapsedOffsets = time.div(VESTING_OFFSETS);
             vested = vested.add(elapsedOffsets.mul(monthlyBalance));

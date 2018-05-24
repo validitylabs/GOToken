@@ -43,17 +43,19 @@ const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 7
 /*INVESTORS DATA*/
 // First investment: activeInvestor1
 const INVESTOR1_WEI = 1e18;
+const INVESTOR2_WEI = 5e18;
 const INVESTOR1_TOKEN_AMOUNT = 270 * 1e18;
 
 /*TOKEN CAPS*/
-const INTERNAL_VAULT_CAP = 2.5e7 * 1e18;
-const PRESALE_VAULT_CAP = 1.35e7 * 1e18;
-const PGO_VAULT_CAP = 3.5e7 * 1e18;
+const INTERNAL_VAULT_CAP = new BigNumber(2.5e7 * 1e18);
+const PRESALE_VAULT_CAP = new BigNumber(1.35e7 * 1e18);
+const PGO_VAULT_CAP = new BigNumber(3.5e7 * 1e18);
 
 
 contract('GotCrowdSale',(accounts) => {
   const owner = accounts[0];
   const activeInvestor1 = accounts[1];
+  const activeInvestor2 = accounts[2];
 
   // Provide gotTokenInstance for every test case
   let gotTokenInstance;
@@ -69,63 +71,113 @@ contract('GotCrowdSale',(accounts) => {
     gotTokenInstance = await GotToken.at(gotTokenAddress);
   });
 
-    it('should instantiate the Crowdsale correctly', async () => {
-      const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-      signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
-    });
-
-    it('should transfer unlocked liquidity to correct wallet', async () => {
-
-    });
-
-    it('should instantiate the internal vault correctly', async () => {
-      internalVaultAddress = await gotCrowdSaleInstance.pgoMonthlyInternalVault();
-      const internalVaultBalance = await gotTokenInstance.balanceOf(internalVaultAddress);
-
-      internalVaultBalance.should.be.bignumber.equal(INTERNAL_VAULT_CAP);
-    });
-
-    it('should instantiate the presale vault correctly', async () => {
-      presaleVaultAddress = await gotCrowdSaleInstance.pgoMonthlyPresaleVault();
-      const presaleVaultBalance = await gotTokenInstance.balanceOf(presaleVaultAddress);
-
-      presaleVaultBalance.should.be.bignumber.equal(PRESALE_VAULT_CAP);
-    });
-
-    it('should instantiate the ParkinGO vault correctly', async () => {
-        pgoVaultAddress = await gotCrowdSaleInstance.pgoVault();
-        const pgoVaultBalance = await gotTokenInstance.balanceOf(pgoVaultAddress);
-
-        pgoVaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP);
-    });
-
-    // it('should have vested pgolocked tokens', async () => {
-    //     const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-    //     signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
-    // });
-
-    // it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
-    //     const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
-    //     await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
-    // });
-
-    it('should buyTokens', async () => {
-      const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
-      const totalSupply1 = await gotTokenInstance.totalSupply();
-
-      const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
-      gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI});
-
-      const activeInvestorBalance2 = await gotTokenInstance.balanceOf(activeInvestor1);
-      const totalSupply2 = await gotTokenInstance.totalSupply();
-
-      activeInvestorBalance2.should.not.be.bignumber.equal(activeInvestorBalance1);
-      totalSupply2.should.not.be.bignumber.equal(totalSupply1);
-    });
-
-    it('should have token ownership', async () => {
+  it('should have token ownership', async () => {
       const gotTokenInstanceOwner = await gotTokenInstance.owner();
       gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
-    });
+  });
+
+  it('should instantiate the Crowdsale correctly', async () => {
+    const signer0 = await gotCrowdSaleInstance.kycSigners(0);
+    signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
+  });
+
+  it('should transfer unlocked liquidity to correct wallet', async () => {
+
+  });
+
+  it('should instantiate the internal vault correctly', async () => {
+    internalVaultAddress = await gotCrowdSaleInstance.pgoMonthlyInternalVault();
+    const internalVaultBalance = await gotTokenInstance.balanceOf(internalVaultAddress);
+
+    internalVaultBalance.should.be.bignumber.equal(INTERNAL_VAULT_CAP);
+  });
+
+  it('should instantiate the presale vault correctly', async () => {
+    presaleVaultAddress = await gotCrowdSaleInstance.pgoMonthlyPresaleVault();
+    const presaleVaultBalance = await gotTokenInstance.balanceOf(presaleVaultAddress);
+
+    presaleVaultBalance.should.be.bignumber.equal(PRESALE_VAULT_CAP);
+  });
+
+  it('should instantiate the ParkinGO vault correctly', async () => {
+      pgoVaultAddress = await gotCrowdSaleInstance.pgoVault();
+      const pgoVaultBalance = await gotTokenInstance.balanceOf(pgoVaultAddress);
+
+      pgoVaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP);
+  });
+
+  // it('should have vested pgolocked tokens', async () => {
+  //     const signer0 = await gotCrowdSaleInstance.kycSigners(0);
+  //     signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
+  // });
+
+  // it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
+  //     const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
+  //     await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
+  // });
+
+  it('should buyTokens', async () => {
+    const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
+    const totalSupply1 = await gotTokenInstance.totalSupply();
+
+    const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
+    gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI});
+
+    const activeInvestorBalance2 = await gotTokenInstance.balanceOf(activeInvestor1);
+    const totalSupply2 = await gotTokenInstance.totalSupply();
+
+    activeInvestorBalance2.should.not.be.bignumber.equal(activeInvestorBalance1);
+    totalSupply2.should.not.be.bignumber.equal(totalSupply1);
+  });
+
+  it('should return ICO started bool to true', async () => {
+    const started = await gotCrowdSaleInstance.started();
+
+    assert.isTrue(started);
+  });
+
+  it('should be possible to pause the crowdsale by the owner', async () => {
+    logger.info('Crowdsale phase paused');
+
+    await gotCrowdSaleInstance.pause({from: owner});
+
+    const paused = await gotCrowdSaleInstance.paused();
+    const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
+
+    await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI}));
+
+    const activeInvestor2Balance = await gotTokenInstance.balanceOf(activeInvestor2);
+
+    assert.isTrue(paused);
+    activeInvestor2Balance.should.be.bignumber.lessThan(100);
+  });
+
+  it('should be possible to unpause the crowdsale by the owner', async () => {
+    logger.info('Crowdsale phase unpaused');
+
+    await gotCrowdSaleInstance.unpause({from: owner});
+
+    const activeInvestor2Balance = await gotTokenInstance.balanceOf(activeInvestor2);
+    const paused = await gotCrowdSaleInstance.paused();
+
+    assert.isFalse(paused);
+
+    const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
+    gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+
+    const activeInvestor2Balance2 = await gotTokenInstance.balanceOf(activeInvestor2);
+
+    activeInvestor2Balance2.should.be.bignumber.lessThan(activeInvestor2Balance);
+  });
+
+  it('should set capReached to true after big purchase', async () => {
+    const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
+    gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+
+    const capReached = await gotCrowdSaleInstance.capReached();
+
+    assert.isFalse(capReached);
+  });
+
 
 });

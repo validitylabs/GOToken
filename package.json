@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "truffle test ./test/got_crowdsale.js ./test/got_monthly_internal_vault.js ./test/got_monthly_presale_vault.js ./test/got_pgovault.js ./test/got_token.js"
   },
   "author": "",
   "license": "ISC",

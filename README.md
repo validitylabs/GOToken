@@ -17,9 +17,8 @@
     - `gotCrowdSaleInstance.pause()`, `gotCrowdSaleInstance.unpause()`
 
   **Note that no tokens can be minted when paused**.
-* Recover ERC20 tokens sent by mistake to the GotToken, Reservation and GotCrowdSaleCrowdsale contracts:
+* Recover ERC20 tokens sent by mistake to the GotToken and GotCrowdSaleCrowdsale contracts:
     - `gotTokenInstance.reclaimToken(token)`
-    - `reservationInstance.reclaimToken(token)`
     - `gotCrowdSaleInstance.reclaimToken(token)`
 
   The balance would be sent to the contract's owner. Then, the owner can transfer the recovered tokens to their respective owner.
@@ -31,9 +30,11 @@
   The ownership of the GotToken contract will be transferred to the Crowdsale contract's owner.
 
 ## Vesting phases
-* Presale investor can claim the vested tokens by calling `presaleTokenVaultInstance.release()`.  Tokens can be transferred by a sender to the beneficiary's address, when calling `ubiatarPlayVault.release(beneficiary)`
-* Transfer vested tokens to the UbiatarPlay wallet by calling `ubiatarPlayVaultInstance.release()`
-* Transfer vested tokens to the founders wallet by calling `foundersVaultInstance.release()`
+* Presale investor can claim the vested tokens by calling `pgoMonthlyPresaleVault.release()`.  
+Tokens can be transferred by a sender to the beneficiary's address, when calling `pgoMonthlyPresaleVault.release(beneficiary)`
+* Founders, advisors, teams and partners can claim the vested tokens by calling `pgoMonthlyInternalVault.release()`.  
+Tokens can be transferred by a sender to the beneficiary's address, when calling `pgoMonthlyInternalVault.release(beneficiary)`
+* Transfer internal liquidity vested tokens to the pgoLockedLiquidityWallet by calling `pgoVault.release()`
 
 ## Specifications
 ###### Token
@@ -44,13 +45,6 @@
 * Symbol: “GOT”.
 * Decimals: 18.
 * Reclaimable token: allows the owner to recover any ERC20 token received. During the crowdsale period, the owner of the token is the crowdsale contract, therefore, it is convenient to reclaim tokens after the crowdsale has ended.
-
-###### Reservation contract
-* Start time: Epoch timestamp: TBA.
-* End time: Epoch timestamp: TBA.
-* Hard cap: 8.750.000 tokens (part of the ICO’s 11.500.000 hard cap).
-* Price: USD 0.75 per token.
-* Bonus: 25%.
 
 ###### Crowdsale
 * Start time: Epoch timestamp: 1528794000 (12 June 2018 09:00:00 GMT).
@@ -77,8 +71,10 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
     * 1⁄3 tokens unlocked right after the end of ICO.
     * Continuous vesting of remaining 2⁄3 tokens: starts 9 months after the end of ICO
     and ends 36 months later.
+    * 60% Discount
+    * 1 token 0,30 usd
 
- * Pre-sale
+ * Partner Pre-sale
     * Already finished.
     * List of Presale investors wallet with GOT amount.
     * 10.000.000 tokens.
@@ -96,18 +92,16 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
     * Continuous vesting: starts 9 months after the end of ICO and ends 36 months
     later.
 
-* ICO
-    * 15.000.000 tokens.
+* Reservation contract
+    * 8.750.000 tokens.
+    * 25% discount
+    * Private invitation only
+    * Require previous KYC Eidoo verification
+    * 1 Token 0,56 usd
+* Public ICO
+    * 2.750.000 tokens plus all not sold during Reservation contract phase
+    * 1 Token 0.75 usd
 
-* UbiatarPlay Vault
-    * 25.000.000 tokens assigned to a unique wallet address.
-    * Unlocked in this way (starting from the end of ICO):
-        * 2.000.000 GOT after 3 month
-        * 4.000.000 GOT after 6 month
-        * 6.000.000 GOT after 9 month
-        * 8.000.000 GOT after 12 month
-        * 10.000.000 GOT after 18 month
-        * 20.500.000 GOT after 24 months
 
 ## Requirements
 The server side scripts requires NodeJS 8 to work properly.

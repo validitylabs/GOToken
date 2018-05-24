@@ -19,10 +19,10 @@ contract PGOVault {
     using SafeERC20 for GotToken;
 
     uint256[4] public vesting_offsets = [
-        336 days,
-        504 days,
-        672 days,
-        840 days
+        360 days,
+        540 days,
+        720 days,
+        900 days
     ];
 
     uint256[4] public vesting_amounts = [

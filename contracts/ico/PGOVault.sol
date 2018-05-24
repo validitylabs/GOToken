@@ -26,10 +26,10 @@ contract PGOVault {
     ];
 
     uint256[4] public vesting_amounts = [
-        8.75e6 * 1e18,
-        8.75e6 * 1e18,
-        8.75e6 * 1e18,
-        8.75e6 * 1e18
+        0.875e7 * 1e18,
+        0.875e7 * 1e18,
+        0.875e7 * 1e18,
+        0.875e7 * 1e18
     ];
 
     address public pgoWallet;

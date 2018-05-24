@@ -19,22 +19,22 @@ contract GotCrowdSale is CrowdsaleBase {
     uint256 public constant END_TIME = 1528068712;                       // 8 June 2018 09:00:00 GMT
     //Token allocation
     //Team, founder, partners and advisor cap locked using Monthly Internal Vault
-    uint256 public constant MONTHLY_INTERNAL_VAULT_CAP = 2.5e6 * 1e18;
+    uint256 public constant MONTHLY_INTERNAL_VAULT_CAP = 2.5e7 * 1e18;
     //Company unlocked liquidity and Airdrop allocation
-    uint256 public constant PGO_UNLOCKED_LIQUIDITY_CAP = 1.5e6 * 1e18;
+    uint256 public constant PGO_UNLOCKED_LIQUIDITY_CAP = 1.5e7 * 1e18;
     //Locked company liquidity
-    uint256 public constant PGO_LOCKED_LIQUIDITY_CAP = 3.5e6 * 1e18;
+    uint256 public constant PGO_LOCKED_LIQUIDITY_CAP = 3.5e7 * 1e18;
 
     //Reserved Presale Allocation  33% free and 67% locked using Monthly Presale Vault
-    uint256 public constant RESERVED_PRESALE_CAP = 1.35e6 * 1e18;
+    uint256 public constant RESERVED_PRESALE_CAP = 1.35e7 * 1e18;
 
     //ICO TOKEN ALLOCATION
     //Public ICO Cap 
-    //uint256 public constant CROWDSALE_CAP = 0.275e6 * 1e18;
+    //uint256 public constant CROWDSALE_CAP = 0.275e7 * 1e18;
     //Reservation contract Cap
-    uint256 public constant RESERVATION_CAP = 0.875e6 * 1e18;
+    uint256 public constant RESERVATION_CAP = 0.875e7 * 1e18;
     //TOTAL ICO CAP
-    uint256 public constant TOTAL_MAX_CAP = 1.15e6 * 1e18;                
+    uint256 public constant TOTAL_MAX_CAP = 1.15e7 * 1e18;
 
     // Vesting contracts.
     //Unlock funds after 9 months monthly

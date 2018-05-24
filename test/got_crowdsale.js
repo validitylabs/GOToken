@@ -46,7 +46,9 @@ const INVESTOR1_WEI = 1e18;
 const INVESTOR1_TOKEN_AMOUNT = 270 * 1e18;
 
 /*TOKEN CAPS*/
-const INTERNAL_VAULT_CAP =2.5e7 * 1e18;
+const INTERNAL_VAULT_CAP = 2.5e7 * 1e18;
+const PRESALE_VAULT_CAP = 1.35e7 * 1e18;
+const PGO_VAULT_CAP = 3.5e7 * 1e18;
 
 
 contract('GotCrowdSale',(accounts) => {
@@ -81,6 +83,20 @@ contract('GotCrowdSale',(accounts) => {
       internalVaultBalance.should.be.bignumber.equal(INTERNAL_VAULT_CAP);
     });
 
+    it('should instantiate the presale vault correctly', async () => {
+      presaleVaultAddress = await gotCrowdSaleInstance.pgoMonthlyPresaleVault();
+      const presaleVaultBalance = await gotTokenInstance.balanceOf(presaleVaultAddress);
+
+      presaleVaultBalance.should.be.bignumber.equal(PRESALE_VAULT_CAP);
+    });
+
+    it('should instantiate the ParkinGO vault correctly', async () => {
+        pgoVaultAddress = await gotCrowdSaleInstance.pgoVault();
+        const pgoVaultBalance = await gotTokenInstance.balanceOf(pgoVaultAddress);
+
+        pgoVaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP);
+    });
+
     // it('should have vested pgolocked tokens', async () => {
     //     const signer0 = await gotCrowdSaleInstance.kycSigners(0);
     //     signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
@@ -92,7 +108,6 @@ contract('GotCrowdSale',(accounts) => {
     // });
 
     it('should buyTokens', async () => {
-
       const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
       const totalSupply1 = await gotTokenInstance.totalSupply();
 

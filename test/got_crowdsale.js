@@ -1,4 +1,4 @@
-import {expectThrow, getEvents, BigNumber} from './helpers/tools';
+import {expectThrow, getEvents, BigNumber, increaseTimeTo} from './helpers/tools';
 import {logger} from "./helpers/logger";
 
 const {ecsign} = require('ethereumjs-util');
@@ -18,7 +18,7 @@ const SIGNER_PK = Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4
 const SIGNER_ADDR = '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase();
 const OTHER_PK = Buffer.from('0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1', 'hex');
 const OTHER_ADDR = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef'.toLowerCase();
-const MAX_AMOUNT = '1000000000000000000';
+const MAX_AMOUNT = '5000000000000000000';
 
 const getKycData = (userAddr, userid, icoAddr, pk) => {
   // sha256("Eidoo icoengine authorization", icoAddress, buyerAddress, buyerId, maxAmount);
@@ -35,6 +35,9 @@ const getKycData = (userAddr, userid, icoAddr, pk) => {
     s: '0x' + sig.s.toString('hex')
   }
 };
+
+const CROWDSALE_START_TIME = 1527066712;                                    // 12 June 2018 09:00:00 GMT
+const CROWDSALE_END_TIME = 1528068712;                                      // 26 June 2018 09:00:00 GMT
 
 const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
@@ -56,6 +59,7 @@ contract('GotCrowdSale',(accounts) => {
   const owner = accounts[0];
   const activeInvestor1 = accounts[1];
   const activeInvestor2 = accounts[2];
+  const activeInvestor3 = accounts[3];
 
   // Provide gotTokenInstance for every test case
   let gotTokenInstance;
@@ -167,17 +171,85 @@ contract('GotCrowdSale',(accounts) => {
 
     const activeInvestor2Balance2 = await gotTokenInstance.balanceOf(activeInvestor2);
 
-    activeInvestor2Balance2.should.be.bignumber.lessThan(activeInvestor2Balance);
+    activeInvestor2Balance.should.be.bignumber.lessThan(activeInvestor2Balance2);
+
+    const availableTokens = await gotCrowdSaleInstance.availableTokens();
+
+    logger.info(availableTokens.c);
   });
 
-  it('should set capReached to true after big purchase', async () => {
+  /*it('should set capReached to true after big purchase', async () => {
     const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
     gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
 
     const capReached = await gotCrowdSaleInstance.capReached();
 
     assert.isFalse(capReached);
-  });
+  });*/
 
+    it('should not transfer tokens before ICO end', async () => {
+      await expectThrow(gotTokenInstance.transfer(activeInvestor3, 1, {from: activeInvestor1}));
 
+      const activeInvestor3Balance = await gotTokenInstance.balanceOf(activeInvestor3);
+      activeInvestor3Balance.should.be.bignumber.equal(0);
+    });
+
+    it('should call closeCrowdsale only from the owner', async () => {
+        await expectThrow(gotCrowdSaleInstance.closeCrowdsale({from: activeInvestor1}));
+        await gotCrowdSaleInstance.closeCrowdsale({from: owner});
+
+        const didOwnerEndCrowdsale = await gotCrowdSaleInstance.didOwnerEndCrowdsale();
+
+        assert.isTrue(didOwnerEndCrowdsale);
+    });
+
+    it('should call finalise only from the owner', async () => {
+        await expectThrow(gotCrowdSaleInstance.finalise({from: activeInvestor2}));
+    });
+
+    it('should increase time to crowdsale end time', async () => {
+        logger.info('Crowdsale phase ended');
+        await increaseTimeTo(CROWDSALE_END_TIME + 1);
+    });
+
+    it('should return true when ended method is called', async () => {
+        const ended = await gotCrowdSaleInstance.ended();
+
+        assert.isTrue(ended);
+    });
+
+    it('should finalise crowdsale sucessfully', async () => {
+        let tokenPaused = await gotTokenInstance.paused();
+        let mintingFinished = await gotTokenInstance.mintingFinished();
+        let tokenOwner = await gotTokenInstance.owner();
+
+        assert.isTrue(tokenPaused);
+        assert.isFalse(mintingFinished);
+        tokenOwner.should.equal(gotCrowdSaleInstance.address);
+
+        await gotCrowdSaleInstance.finalise({from: owner});
+
+        tokenPaused = await gotTokenInstance.paused();
+        mintingFinished = await gotTokenInstance.mintingFinished();
+        tokenOwner = await gotTokenInstance.owner();
+
+        assert.isFalse(tokenPaused);
+        assert.isTrue(mintingFinished);
+        tokenOwner.should.equal(owner);
+    });
+
+    it('should allow transfer of tokens after ICO ended', async () => {
+        const activeInvestor1Balance1 = await gotTokenInstance.balanceOf(activeInvestor1);
+        logger.info(activeInvestor1Balance1.c);
+        const activeInvestor3Balance1 = await gotTokenInstance.balanceOf(activeInvestor3);
+        logger.info(activeInvestor3Balance1.c);
+
+        await gotTokenInstance.transfer(activeInvestor3, 1, {from: activeInvestor1});
+
+        const activeInvestor1Balance2 = await gotTokenInstance.balanceOf(activeInvestor1);
+        const activeInvestor3Balance2 = await gotTokenInstance.balanceOf(activeInvestor3);
+
+        activeInvestor1Balance1.should.not.be.bignumber.equal(activeInvestor1Balance2);
+        activeInvestor3Balance1.should.not.be.bignumber.equal(activeInvestor3Balance2);
+    });
 });

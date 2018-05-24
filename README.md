@@ -2,18 +2,18 @@
 
 ## Deployment
 1. Deploy GotToken and note the address
-`2. Deploy Reservation and note the address`
-`3. Deploy PresaleTokenVault and note the address`
-4. Deploy GotCrowdSale and pass the addresses of token, reservation and presale token vault addresses (and further parameters as per constructor definition)
-5. Set the crowdsale address in the reservation contract by calling `reservationInstance.setCrowdsale(gotCrowdsaleAddress)`
-6. Transfer ownership of the token to the crowdsale by calling `gotTokenInstance.transferOwnership(gotCrowdsaleAddress)`
-`7. Call the function in the crowdsale that mints the pre-allocated tokens for founders, advisors and UbiatarPlay gotCrowdsaleInstance.mintPreAllocatedTokens()`
-8. Set the presale investments in the crowdsale by calling `gotCrowdSaleInstance.initPresaleTokenVault(beneficiaries, balances)`. **Note that this function can be called only one time!**.
+2. Deploy Internal Monthly Vault
+3. Deploy Presale Monthly Vault
+4. Deploy GotCrowdSale and pass the addresses of token, wallet addresses , internal and presale token vault addresses (and further parameters as per constructor definition)
+5. Transfer ownership of the token to the crowdsale by calling `gotTokenInstance.transferOwnership(gotCrowdsaleAddress)`
+6. Call the function in the crowdsale that mints the pre-allocated locked and unlocked liquidity funds `gotCrowdsaleInstance.mintPreAllocatedTokens()`
+7. Set the tokens for founders, advisors, teams and partners investments in the crowdsale by calling `gotCrowdSaleInstance.initPGOMonthlyInternalVault(beneficiaries, balances)`
+8. Set the tokens for private presales in the crowdsale by calling `gotCrowdSaleInstance.initPGOMonthlyPresaleVault(beneficiaries, balances)`
+9. Call the function in the crowdsale that mints the second presale phase (reservation contract) in the crowdsale by calling `gotCrowdSaleInstance.mintReservation(beneficiaries, balances)`
 
 ## During the Reservation & Crowdsale phases
 ###### Callable by the owner only:
 * Pause/unpause the sales in case of an emergency:
-    - `reservationInstance.pause()`, `reservationInstance.unpause()`
     - `gotCrowdSaleInstance.pause()`, `gotCrowdSaleInstance.unpause()`
 
   **Note that no tokens can be minted when paused**.

@@ -43,6 +43,9 @@ const VAULT_START_TIME = 1530003600;
 /*TOKEN CAPS*/
 const PGO_VAULT_CAP = new BigNumber(3.5e7 * 1e18);
 const PGO_VAULT_STEP1 = new BigNumber(0.875e7 * 1e18);
+const PGO_VAULT_STEP2 = new BigNumber(1.75e7 * 1e18);
+const PGO_VAULT_STEP3 = new BigNumber(2.625e7 * 1e18);
+const PGO_VAULT_STEP4 = new BigNumber(3.5e7 * 1e18);
 
 contract('GotPGOVault',(accounts) => {
   const owner = accounts[0];
@@ -121,6 +124,37 @@ contract('GotPGOVault',(accounts) => {
         vaultBalance1.should.be.bignumber.equal(vaultBalance2.plus(lockedLiquidityWalletBalance2));
 
         lockedLiquidityWalletBalance2.should.be.bignumber.equal(PGO_VAULT_STEP1);
+
+    });
+
+    it('should increase time to release 2', async () => {
+        log.info('[ Move Time to Vesting step 2]');
+        await waitNDays(180);
+    });
+
+    it('should release locked liquidity vested tokens 2', async () => {
+        //force ico closing 
+
+        const lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        const vaultBalance1 = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP1);
+        vaultBalance1.should.be.bignumber.equal(PGO_VAULT_CAP);
+
+        let vested = await PGOVaultInstance.vestedAmount();
+        vested.should.be.bignumber.equal(PGO_VAULT_STEP2);
+
+        await PGOVaultInstance.release();
+
+        const lockedLiquidityWalletBalance2 = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        const vaultBalance2 = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        log.info(lockedLiquidityWalletBalance2);
+
+        assert.notEqual(lockedLiquidityWalletBalance2, 0);
+        vaultBalance1.should.be.bignumber.equal(vaultBalance2.plus(lockedLiquidityWalletBalance2));
+
+        lockedLiquidityWalletBalance2.should.be.bignumber.equal(PGO_VAULT_STEP2);
 
     });
 

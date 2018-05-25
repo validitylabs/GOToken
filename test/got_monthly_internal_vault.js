@@ -41,7 +41,7 @@ const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
 const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     
 
-const VAULT_START_TIME = 1530003600;      // 26 June 2018 09:00:00 GMT
+const VAULT_START_TIME = 1530003601;      // 26 June 2018 09:00:00 GMT
 
 contract('PGOMonthlyInternalVault',(accounts) => {
     const owner = accounts[0];
@@ -100,14 +100,16 @@ contract('PGOMonthlyInternalVault',(accounts) => {
 
     it('should check 1/27 of token are unlocked after 10 month ', async () => {
 
-        await waitNDays(300);
+        await waitNDays(301);
         await pgoMonthlyInternalVaultInstance.release(beneficiary1);
 
-        beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+        let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
 
-        div27BeneficiaryBalance = beneficiary1_balance.div(27);
+        log.info(beneficiary1Balance);
+
+        let div27BeneficiaryBalance = beneficiary1_balance.div(27);
         
-        div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1_balance);
+        div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
 
         
     });

@@ -32,12 +32,13 @@ contract PGOMonthlyPresaleVault is PGOMonthlyInternalVault {
             vested = investments[investmentIndex].totalBalance.div(3);
         }
         if (block.timestamp >= cliff && block.timestamp < end) {
-            // after cliff -> 1/27 of totalBalance every month
+            // after cliff -> 1/27 of totalBalance every month, must skip first 9 month 
             uint256 unlockedStartBalance = investments[investmentIndex].totalBalance.div(3);
             uint256 totalBalance = investments[investmentIndex].totalBalance;
             uint256 lockedBalance = totalBalance.sub(unlockedStartBalance);
             uint256 monthlyBalance = lockedBalance.div(VESTING_DIV_RATE);
-            uint256 time = block.timestamp.sub(start);
+            uint256 daysToSkip = 270 days;
+            uint256 time = block.timestamp.sub(start).sub(daysToSkip);
             uint256 elapsedOffsets = time.div(VESTING_OFFSETS);
             vested = vested.add(elapsedOffsets.mul(monthlyBalance));
         }

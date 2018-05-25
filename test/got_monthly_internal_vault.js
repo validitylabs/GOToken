@@ -41,7 +41,7 @@ const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
 const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     
 
-const VAULT_START_TIME = 1530003601;      // 26 June 2018 09:00:00 GMT
+const VAULT_START_TIME = 1530003801;      // 26 June 2018 09:00:00 GMT
 
 contract('PGOMonthlyInternalVault',(accounts) => {
     const owner = accounts[0];

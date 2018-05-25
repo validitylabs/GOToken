@@ -4,6 +4,9 @@ const PGOMonthlyInternalVault = artifacts.require("./PGOMonthlyInternalVault.sol
 const PGOMonthlyPresaleVault = artifacts.require("./PGOMonthlyPresaleVault.sol");
 
 module.exports = function(deployer, network, accounts) {
+  const internalWallet = accounts[6];
+  const presaleWallet = accounts[5];
+  const reservationWallet = accounts[4];
 
   //Initialize internal addresses
   const internalAddresses = [internalWallet];

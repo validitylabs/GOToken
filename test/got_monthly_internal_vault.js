@@ -107,7 +107,7 @@ contract('PGOMonthlyInternalVault',(accounts) => {
 
         log.info(beneficiary1Balance);
 
-        let div27BeneficiaryBalance = beneficiary1_balance.div(27);
+        let div27BeneficiaryBalance = beneficiary1_balance.dividedBy(27);
         
         div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
 

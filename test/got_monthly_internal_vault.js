@@ -134,4 +134,20 @@ contract('PGOMonthlyInternalVault',(accounts) => {
 
         
     });
+
+    it('should release all token after vault end ', async () => {
+
+        BigNumber.config({DECIMAL_PLACES:0});
+        let days = 30*36; 
+        let endTime = VAULT_START_TIME + (days * 24 * 60 * 60);
+        await increaseTimeTo(endTime);
+        
+        await pgoMonthlyInternalVaultInstance.release(beneficiary1);
+
+        let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+
+        beneficiary1_balance.should.be.bignumber.equal(beneficiary1Balance);
+
+        
+    });
 });

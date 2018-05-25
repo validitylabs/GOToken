@@ -83,12 +83,65 @@ contract('PGOMonthlyPresaleVault',(accounts) => {
         const vested = await pgoMonthlyPresaleVaultInstance.vestedAmount(beneficiary1);
         vested.should.be.bignumber.equal(beneficiary1_balance.div(3));
 
+        let releasable = await pgoMonthlyPresaleVaultInstance.releasableAmount(beneficiary1);
+        releasable.should.be.bignumber.equal(beneficiary1_balance.div(3));
+
         await pgoMonthlyPresaleVaultInstance.release(beneficiary1);
+
+        releasable = await pgoMonthlyPresaleVaultInstance.releasableAmount(beneficiary1);
+        releasable.should.be.bignumber.equal(0);
 
         beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
         vaultBalance = await gotTokenInstance.balanceOf(pgoMonthlyPresaleVaultInstance.address);
 
         beneficiary1Balance.should.be.bignumber.equal(beneficiary1_balance.div(3));
         vaultBalance.should.be.bignumber.equal(beneficiary1_balance.sub(beneficiary1_balance.div(3)));
+    });
+
+    it('should check 1/27 of token are unlocked after 10 month ', async () => {
+        BigNumber.config({DECIMAL_PLACES:0});
+
+        await waitNDays(300);
+        await pgoMonthlyPresaleVaultInstance.release(beneficiary1);
+
+        const beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+
+        log.info(beneficiary1Balance);
+
+        const div27BeneficiaryBalance = beneficiary1_balance.mul(2).div(3).div(27);
+        const initial33percentBalance = beneficiary1_balance.div(3);
+
+        //div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance.add(initial33percentBalance));
+        beneficiary1Balance.should.be.bignumber.equal(div27BeneficiaryBalance.add(initial33percentBalance));
+    });
+
+    it('should check 2/27 of token are unlocked after 11 month ', async () => {
+        BigNumber.config({DECIMAL_PLACES:0});
+
+        await waitNDays(30);
+        await pgoMonthlyPresaleVaultInstance.release(beneficiary1);
+
+        let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+
+        log.info(beneficiary1Balance);
+
+        let div27BeneficiaryBalance = beneficiary1_balance.mul(2).div(3).div(27);
+        div27BeneficiaryBalance = div27BeneficiaryBalance.mul(2);
+        const initial33percentBalance = beneficiary1_balance.div(3);
+
+        beneficiary1Balance.should.be.bignumber.equal(div27BeneficiaryBalance.add(initial33percentBalance));
+    });
+
+    it('should release all token after vault end ', async () => {
+        BigNumber.config({DECIMAL_PLACES:0});
+        const days = 30*36;
+        const endTime = VAULT_START_TIME + (days * 24 * 60 * 60);
+        await increaseTimeTo(endTime);
+
+        await pgoMonthlyPresaleVaultInstance.release(beneficiary1);
+
+        const beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+
+        beneficiary1Balance.should.be.bignumber.equal(beneficiary1_balance);
     });
 });

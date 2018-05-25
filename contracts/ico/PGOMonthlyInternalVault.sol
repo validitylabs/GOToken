@@ -42,10 +42,10 @@ contract PGOMonthlyInternalVault {
 
 
     /**
-     * @dev Funcion to be fired by the initPresaleTokenVault function from the GotCrowdale contract to set the PresaleTokenVault's state after deployment.
-     * @param beneficiaries Array of the presale investors addresses to whom vested tokens are transferred.
+     * @dev Function to be fired by the initPGOMonthlyInternalVault function from the GotCrowdSale contract to set the InternalVault's state after deployment.
+     * @param beneficiaries Array of the internal investors addresses to whom vested tokens are transferred.
      * @param balances Array of token amount per beneficiary.
-     * @param startTime Start time at which the first realeased will be executed, and from which the cliff for second release is calculated.
+     * @param startTime Start time at which the first released will be executed, and from which the cliff for second release is calculated.
      * @param _token The address of the GOT Token.
      */
     function init(address[] beneficiaries, uint256[] balances, uint256 startTime, address _token) public {

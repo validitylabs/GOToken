@@ -17,6 +17,7 @@ contract GotCrowdSale is CrowdsaleBase {
     /*** CONSTANTS ***/
     uint256 public constant START_TIME = 1528794000;                     // 12 June 2018 09:00:00 GMT
     uint256 public constant END_TIME = 1530003600;                       // 26 June 2018 09:00:00 GMT
+    uint256 public constant START_INTERNAL_VAULT_TIME = 1553331600;      // 23 March 2018 09:00:00 GMT
     //Token allocation
     //Team, founder, partners and advisor cap locked using Monthly Internal Vault
     uint256 public constant MONTHLY_INTERNAL_VAULT_CAP = 2.5e7 * 1e18;
@@ -117,7 +118,7 @@ contract GotCrowdSale is CrowdsaleBase {
         //check that all balances matches internal vault allocated Cap
         require(totalInternalBalance == MONTHLY_INTERNAL_VAULT_CAP);
 
-        pgoMonthlyInternalVault.init(beneficiaries, balances, MONTHLY_INTERNAL_VAULT_CAP, token);
+        pgoMonthlyInternalVault.init(beneficiaries, balances, START_INTERNAL_VAULT_TIME, token);
 
         mintTokens(address(pgoMonthlyInternalVault), MONTHLY_INTERNAL_VAULT_CAP);
     }

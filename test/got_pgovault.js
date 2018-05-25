@@ -15,7 +15,7 @@ const should = require('chai') // eslint-disable-line
     .should();
 
 // Values for testing buy methods with the required MAX_AMOUNT by Eidoo's KYCBase contract
-const SIGNER_PK = Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex');
+/*const SIGNER_PK = Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex');
 const MAX_AMOUNT = '1000000000000000000';
 
 const getKycData = (userAddr, userid, icoAddr, pk) => {
@@ -32,7 +32,7 @@ const getKycData = (userAddr, userid, icoAddr, pk) => {
         r: '0x' + sig.r.toString('hex'),
         s: '0x' + sig.s.toString('hex')
     };
-};
+};*/
 
 const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
@@ -48,8 +48,8 @@ const PGO_VAULT_STEP3 = new BigNumber(2.625e7 * 1e18);
 const PGO_VAULT_STEP4 = new BigNumber(3.5e7 * 1e18);
 
 contract('GotPGOVault',(accounts) => {
-  const owner = accounts[0];
-  const activeInvestor = accounts[1];
+  //const owner = accounts[0];
+  //const activeInvestor = accounts[1];
 
   const lockedLiquidityWallet = accounts[9];
 

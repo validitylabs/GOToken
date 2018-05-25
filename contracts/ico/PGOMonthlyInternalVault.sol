@@ -65,6 +65,14 @@ contract PGOMonthlyInternalVault {
     }
 
     /**
+     * @dev Allows to check an investement .
+     * @param index The index of investment to check.
+     */
+    function getInvestment(uint index) public view returns(address, uint256, uint256) {
+        return (investments[index].beneficiary,investments[index].totalBalance,investments[index].released);
+    }
+
+    /**
      * @dev Allows a sender to transfer vested tokens to the beneficiary's address.
      * @param beneficiary The address that will receive the vested tokens.
      */

@@ -4,7 +4,6 @@ const PGOMonthlyInternalVault = artifacts.require("./PGOMonthlyInternalVault.sol
 const PGOMonthlyPresaleVault = artifacts.require("./PGOMonthlyPresaleVault.sol");
 
 module.exports = function(deployer, network, accounts) {
-
   const lockedLiquidityWallet = accounts[9];
   const unlockedLiquidityWallet = accounts[8];
   const wallet = accounts[7];
@@ -34,13 +33,13 @@ module.exports = function(deployer, network, accounts) {
       gotInstance.transferOwnership(GotCrowdSale.address).then(() => {
         console.log('[ Token ownership transferred to] '+ GotCrowdSale.address);
         gotCrowdSaleInstance.mintPreAllocatedTokens().then(() => {
-          console.log('[ UnlockedLiquidity minted, LockedLiquidity moved to PGOVAULT] ');
+          console.log('[ UnlockedLiquidity minted, LockedLiquidity moved to PGOVAULT]');
           gotCrowdSaleInstance.initPGOMonthlyInternalVault(internalAddresses, internalBalances).then(() => {
             console.log('[ Initialized internal vault]');
             gotCrowdSaleInstance.initPGOMonthlyPresaleVault(presaleAddresses, presaleBalances).then(() => {
-              console.log('[ Initialized presale vault] ');
+              console.log('[ Initialized presale vault]');
               gotCrowdSaleInstance.mintReservation(reservationAddresses, reservationBalances).then(() => {
-                console.log('[ Minted presale second step] ');
+                console.log('[ Minted presale second step]');
               });
             });
           });

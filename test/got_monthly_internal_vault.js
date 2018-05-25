@@ -46,6 +46,9 @@ const VAULT_START_TIME = 1553331600;      // 23 March 2018 09:00:00 GMT
 contract('PGOMonthlyInternalVault',(accounts) => {
     const owner = accounts[0];
     const activeInvestor = accounts[1];
+    const beneficiary1 = accounts[6];
+    const INTERNAL_BALANCE1 = 2.5e7 * 1e18;
+
 
     // Provide gotTokenInstance for every test case
     let gotTokenInstance;
@@ -60,24 +63,23 @@ contract('PGOMonthlyInternalVault',(accounts) => {
         pgoMonthlyInternalVaultInstance = await PGOMonthlyInternalVault.deployed();
     });
 
-    /*it('should have vested pgolocked tokens', async () => {
-        let balance = await pgoMonthlyInternalVaultInstance.unreleasedAmount();
+    /*it('should match the list of beneficiaries with the test list', async () => {
+        await expectThrow(pgoMonthlyInternalVaultInstance.releasableAmount(beneficiary1));
+        //releasableAmount.assert.equal.bignumber(INTERNAL_BALANCE1);
+    });
+
+    it('should have vested pgolocked tokens', async () => {
+        const balance = await pgoMonthlyInternalVaultInstance.unreleasedAmount();
         log.info(balance);
     });
 
     it('should increase time to internal vault vesting start time', async () => {
         logger.info('Vesting phase started');
-        await increaseTimeTo(VAULT_START_TIME + 1);
+        await increaseTimeTo(VAULT_START_TIME + 1000000);
     });
 
-    it('should increase vested amount after passing time offsets', async () => {
-        const vestedAmount1 = await PGOVaultInstance.vestedAmount();
-        log.info(vestedAmount1);
-        await waitNDays(380);
-
-        const vestedAmount2 = await PGOVaultInstance.vestedAmount();
-        log.info(vestedAmount2);
-        vestedAmount2.should.not.equal(vestedAmount1);
+    it('should match the list of beneficiaries with the test list', async () => {
+        const releasableAmount = pgoMonthlyInternalVaultInstance.releasableAmount(beneficiary1);
+        releasableAmount.assert.equal.bignumber(INTERNAL_BALANCE1);
     });*/
-
 });

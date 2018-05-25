@@ -26,9 +26,9 @@ contract PGOMonthlyInternalVault {
 
     /*** CONSTANTS ***/
     uint256 public constant VESTING_DIV_RATE = 27;                   // division rate of monthly vesting
-    uint256 public constant VESTING_OFFSETS = 30 days;                // vesting interval
+    uint256 public constant VESTING_OFFSETS = 30 days;               // vesting interval
     uint256 public constant VESTING_CLIFF = 270 days;                // vesting interval
-    uint256 public constant VESTING_DURATION = 1080 days;                // vesting duration
+    uint256 public constant VESTING_DURATION = 1080 days;            // vesting duration
 
     GotToken public token;
     uint256 public start;
@@ -39,7 +39,6 @@ contract PGOMonthlyInternalVault {
 
     // key: investor address; value: index in investments array.
     mapping(address => uint256) public investorLUT;
-
 
     /**
      * @dev Function to be fired by the initPGOMonthlyInternalVault function from the GotCrowdSale contract to set the InternalVault's state after deployment.

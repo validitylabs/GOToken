@@ -63,11 +63,12 @@ contract('PGOMonthlyInternalVault',(accounts) => {
         pgoMonthlyInternalVaultInstance = await PGOMonthlyInternalVault.deployed();
     });
 
-    /*it('should match the list of beneficiaries with the test list', async () => {
+    it('should match the list of beneficiaries with the test list', async () => {
         await expectThrow(pgoMonthlyInternalVaultInstance.releasableAmount(beneficiary1));
-        //releasableAmount.assert.equal.bignumber(INTERNAL_BALANCE1);
+        releasableAmount.assert.equal.bignumber(INTERNAL_BALANCE1);
     });
 
+    /*
     it('should have vested pgolocked tokens', async () => {
         const balance = await pgoMonthlyInternalVaultInstance.unreleasedAmount();
         log.info(balance);

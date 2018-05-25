@@ -1,3 +1,5 @@
+const BigNumber = web3.BigNumber;
+
 const Got = artifacts.require("./GotToken.sol");
 const GotCrowdSale = artifacts.require("./GotCrowdSale.sol");
 const PGOMonthlyInternalVault = artifacts.require("./PGOMonthlyInternalVault.sol");
@@ -7,16 +9,15 @@ module.exports = function(deployer, network, accounts) {
   const internalWallet = accounts[6];
   const presaleWallet = accounts[5];
   const reservationWallet = accounts[4];
-
   //Initialize internal addresses
   const internalAddresses = [internalWallet];
-  const internalBalances = [2.5e7 * 1e18];
+  const internalBalances = [new BigNumber(2.5e7 * 1e18)];
   //Initialize presale addresses
   const presaleAddresses = [presaleWallet];
-  const presaleBalances = [1.35e7 * 1e18];
+  const presaleBalances = [new BigNumber(1.35e7 * 1e18)];
   //Initialize reservation addresses
   const reservationAddresses = [reservationWallet];
-  const reservationBalances = [0.8e7 * 1e18];
+  const reservationBalances = [new BigNumber(0.8e7 * 1e18)];
 
   let gotInstance;
   let gotCrowdSaleInstance;

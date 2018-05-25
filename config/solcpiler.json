@@ -1,0 +1,5 @@
+{
+    "outputJsDir": "./build/bundle",
+    "outputSolDir": "./build/bundle",
+    "input": "./contracts/ico/**/*.sol"
+}

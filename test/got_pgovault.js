@@ -1,4 +1,4 @@
-import {expectThrow, waitNDays, getEvents, BigNumber} from './helpers/tools';
+import {expectThrow, waitNDays,increaseTimeTo, getEvents, BigNumber} from './helpers/tools';
 import {logger as log} from "./helpers/logger";
 
 const {ecsign} = require('ethereumjs-util');
@@ -38,9 +38,11 @@ const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
 const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 250 UAC tokens per ether
 
+const VAULT_START_TIME = 1530003600;
 
 /*TOKEN CAPS*/
 const PGO_VAULT_CAP = new BigNumber(3.5e7 * 1e18);
+const PGO_VAULT_STEP1 = new BigNumber(0.875e7 * 1e18);
 
 contract('GotPGOVault',(accounts) => {
   const owner = accounts[0];
@@ -82,16 +84,23 @@ contract('GotPGOVault',(accounts) => {
         vested.should.be.bignumber.equal(new BigNumber(0));
     });
 
+    it('should increase time to ICO END', async () => {
+        log.info('[ ICO END TIME ]');
+        await increaseTimeTo(VAULT_START_TIME);
 
-    it('should increase time to release 2', async () => {
-        log.info('[ Vesting starts]');
-        await waitNDays(450);
+        await gotCrowdSaleInstance.finalise();
+        log.info('[ Finalized ]');
+    });
+    
+
+    it('should increase time to release 1', async () => {
+        log.info('[ Move Time to Vesting step 1]');
+        await waitNDays(361);
     });
 
     it('should release locked liquidity vested tokens 1', async () => {
         //force ico closing 
-        await gotCrowdSaleInstance.finalise();
-        log.info('[ Finalized ]');
+
         const lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
         const vaultBalance1 = await gotTokenInstance.balanceOf(PGOVaultAddress);
 
@@ -99,7 +108,8 @@ contract('GotPGOVault',(accounts) => {
         vaultBalance1.should.be.bignumber.equal(PGO_VAULT_CAP);
 
         let vested = await PGOVaultInstance.vestedAmount();
-        log.info(vested);
+        vested.should.be.bignumber.equal(PGO_VAULT_STEP1);
+
         await PGOVaultInstance.release();
 
         const lockedLiquidityWalletBalance2 = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
@@ -109,23 +119,9 @@ contract('GotPGOVault',(accounts) => {
 
         assert.notEqual(lockedLiquidityWalletBalance2, 0);
         vaultBalance1.should.be.bignumber.equal(vaultBalance2.plus(lockedLiquidityWalletBalance2));
+
+        lockedLiquidityWalletBalance2.should.be.bignumber.equal(PGO_VAULT_STEP1);
+
     });
-
-    // it('should increase vested amount after passing time offsets', async () => {
-    //     const releasableAmount1 = await PGOVaultInstance.releasableAmount();
-    //     const vestedAmount1 = await PGOVaultInstance.vestedAmount();
-    //     const unreleasedAmount1 = await PGOVaultInstance.unreleasedAmount();
-    //     const start = await PGOVaultInstance.start();
-
-    //     log.info(releasableAmount1);
-    //     log.info(vestedAmount1);
-    //     log.info(start);
-    //     log.info(unreleasedAmount1);
-    //     // await waitNDays(380);
-    //     // await PGOVaultInstance.release();
-    //     // const releasableAmount2 = await PGOVaultInstance.releasableAmount();
-    //     // log.info(releasableAmount2);
-    //     // releasableAmount2.should.be.bignumber.not.equal(releasableAmount1);
-    // });
 
 });

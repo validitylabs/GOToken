@@ -100,7 +100,9 @@ contract('PGOMonthlyInternalVault',(accounts) => {
 
     it('should check 1/27 of token are unlocked after 10 month ', async () => {
 
-        await waitNDays(301);
+        BigNumber.config({DECIMAL_PLACES:0});
+
+        await waitNDays(300);
         await pgoMonthlyInternalVaultInstance.release(beneficiary1);
 
         let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
@@ -109,6 +111,25 @@ contract('PGOMonthlyInternalVault',(accounts) => {
 
         let div27BeneficiaryBalance = beneficiary1_balance.dividedBy(27);
         
+        div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
+
+        
+    });
+
+    it('should check 2/27 of token are unlocked after 11 month ', async () => {
+
+        BigNumber.config({DECIMAL_PLACES:0});
+
+        await waitNDays(30);
+        await pgoMonthlyInternalVaultInstance.release(beneficiary1);
+
+        let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+
+        log.info(beneficiary1Balance);
+
+        let div27BeneficiaryBalance = beneficiary1_balance.dividedBy(27);
+        div27BeneficiaryBalance = div27BeneficiaryBalance.mul(2);
+
         div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
 
         

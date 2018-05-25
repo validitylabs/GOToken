@@ -21,23 +21,23 @@ const OTHER_ADDR = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef'.toLowerCase();
 const MAX_AMOUNT = '5000000000000000000';
 
 const getKycData = (userAddr, userid, icoAddr, pk) => {
-  // sha256("Eidoo icoengine authorization", icoAddress, buyerAddress, buyerId, maxAmount);
-  const hash = abi.soliditySHA256(
-    [ 'string', 'address', 'address', 'uint64', 'uint' ],
-    [ 'Eidoo icoengine authorization', icoAddr, userAddr, new BN(userid), new BN(MAX_AMOUNT) ]
-  );
-  const sig = ecsign(hash, pk);
-  return {
-    id: userid,
-    max: MAX_AMOUNT,
-    v: sig.v,
-    r: '0x' + sig.r.toString('hex'),
-    s: '0x' + sig.s.toString('hex')
-  }
+    // sha256("Eidoo icoengine authorization", icoAddress, buyerAddress, buyerId, maxAmount);
+    const hash = abi.soliditySHA256(
+        [ 'string', 'address', 'address', 'uint64', 'uint' ],
+        [ 'Eidoo icoengine authorization', icoAddr, userAddr, new BN(userid), new BN(MAX_AMOUNT) ]
+    );
+    const sig = ecsign(hash, pk);
+    return {
+        id: userid,
+        max: MAX_AMOUNT,
+        v: sig.v,
+        r: '0x' + sig.r.toString('hex'),
+        s: '0x' + sig.s.toString('hex')
+    }
 };
 
-const CROWDSALE_START_TIME = 1527066712;                                    // 12 June 2018 09:00:00 GMT
-const CROWDSALE_END_TIME = 1528068712;                                      // 26 June 2018 09:00:00 GMT
+const CROWDSALE_START_TIME = 1528794000;                                    // 12 June 2018 09:00:00 GMT
+const CROWDSALE_END_TIME = 1530003600;                                      // 26 June 2018 09:00:00 GMT
 
 const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
@@ -56,142 +56,152 @@ const PGO_VAULT_CAP = new BigNumber(3.5e7 * 1e18);
 
 
 contract('GotCrowdSale',(accounts) => {
-  const owner = accounts[0];
-  const activeInvestor1 = accounts[1];
-  const activeInvestor2 = accounts[2];
-  const activeInvestor3 = accounts[3];
+    const owner = accounts[0];
+    const activeInvestor1 = accounts[1];
+    const activeInvestor2 = accounts[2];
+    const activeInvestor3 = accounts[3];
 
-  // Provide gotTokenInstance for every test case
-  let gotTokenInstance;
-  let gotCrowdSaleInstance;
+    // Provide gotTokenInstance for every test case
+    let gotTokenInstance;
+    let gotCrowdSaleInstance;
 
-  let internalVaultAddress;
-  let presaleVaultAddress;
-  let pgoVaultAddress;
+    let internalVaultAddress;
+    let presaleVaultAddress;
+    let pgoVaultAddress;
 
-  beforeEach(async () => {
-    gotCrowdSaleInstance = await GotCrowdSale.deployed();
-    const gotTokenAddress = await gotCrowdSaleInstance.token();
-    gotTokenInstance = await GotToken.at(gotTokenAddress);
-  });
+    beforeEach(async () => {
+        gotCrowdSaleInstance = await GotCrowdSale.deployed();
+        const gotTokenAddress = await gotCrowdSaleInstance.token();
+        gotTokenInstance = await GotToken.at(gotTokenAddress);
+    });
 
-  it('should have token ownership', async () => {
-      const gotTokenInstanceOwner = await gotTokenInstance.owner();
-      gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
-  });
+    it('should have token ownership', async () => {
+        const gotTokenInstanceOwner = await gotTokenInstance.owner();
+        gotTokenInstanceOwner.should.equal(gotCrowdSaleInstance.address);
+    });
 
-  it('should instantiate the Crowdsale correctly', async () => {
-    const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-    signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
-  });
+    it('should instantiate the Crowdsale correctly', async () => {
+        const signer0 = await gotCrowdSaleInstance.kycSigners(0);
+        signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
+    });
 
-  it('should transfer unlocked liquidity to correct wallet', async () => {
+    it('should transfer unlocked liquidity to correct wallet', async () => {
 
-  });
+    });
 
-  it('should instantiate the internal vault correctly', async () => {
-    internalVaultAddress = await gotCrowdSaleInstance.pgoMonthlyInternalVault();
-    const internalVaultBalance = await gotTokenInstance.balanceOf(internalVaultAddress);
+    it('should instantiate the internal vault correctly', async () => {
+        internalVaultAddress = await gotCrowdSaleInstance.pgoMonthlyInternalVault();
+        const internalVaultBalance = await gotTokenInstance.balanceOf(internalVaultAddress);
 
-    internalVaultBalance.should.be.bignumber.equal(INTERNAL_VAULT_CAP);
-  });
+        internalVaultBalance.should.be.bignumber.equal(INTERNAL_VAULT_CAP);
+    });
 
-  it('should instantiate the presale vault correctly', async () => {
-    presaleVaultAddress = await gotCrowdSaleInstance.pgoMonthlyPresaleVault();
-    const presaleVaultBalance = await gotTokenInstance.balanceOf(presaleVaultAddress);
+    it('should instantiate the presale vault correctly', async () => {
+        presaleVaultAddress = await gotCrowdSaleInstance.pgoMonthlyPresaleVault();
+        const presaleVaultBalance = await gotTokenInstance.balanceOf(presaleVaultAddress);
 
-    presaleVaultBalance.should.be.bignumber.equal(PRESALE_VAULT_CAP);
-  });
+        presaleVaultBalance.should.be.bignumber.equal(PRESALE_VAULT_CAP);
+    });
 
-  it('should instantiate the ParkinGO vault correctly', async () => {
-      pgoVaultAddress = await gotCrowdSaleInstance.pgoVault();
-      const pgoVaultBalance = await gotTokenInstance.balanceOf(pgoVaultAddress);
+    it('should instantiate the ParkinGO vault correctly', async () => {
+        pgoVaultAddress = await gotCrowdSaleInstance.pgoVault();
+        const pgoVaultBalance = await gotTokenInstance.balanceOf(pgoVaultAddress);
 
-      pgoVaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP);
-  });
+        pgoVaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP);
+    });
 
-  // it('should have vested pgolocked tokens', async () => {
-  //     const signer0 = await gotCrowdSaleInstance.kycSigners(0);
-  //     signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
-  // });
+    // it('should have vested pgolocked tokens', async () => {
+    //     const signer0 = await gotCrowdSaleInstance.kycSigners(0);
+    //     signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
+    // });
 
-  // it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
-  //     const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
-  //     await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
-  // });
+    it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
+        const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
+        await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI}));
+    });
 
-  it('should buyTokens', async () => {
-    const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
-    const totalSupply1 = await gotTokenInstance.totalSupply();
+    it('should increase time to crowdsale start time', async () => {
+        logger.info('Crowdsale phase started');
+        await increaseTimeTo(CROWDSALE_START_TIME + 1);
+    });
 
-    const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
-    gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI});
+    it('should buyTokens', async () => {
+        const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
+        const totalSupply1 = await gotTokenInstance.totalSupply();
 
-    const activeInvestorBalance2 = await gotTokenInstance.balanceOf(activeInvestor1);
-    const totalSupply2 = await gotTokenInstance.totalSupply();
+        const d = getKycData(activeInvestor1, 1, gotCrowdSaleInstance.address, SIGNER_PK);
+        gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor1, value: INVESTOR1_WEI});
 
-    activeInvestorBalance2.should.not.be.bignumber.equal(activeInvestorBalance1);
-    totalSupply2.should.not.be.bignumber.equal(totalSupply1);
-  });
+        const activeInvestorBalance2 = await gotTokenInstance.balanceOf(activeInvestor1);
+        const totalSupply2 = await gotTokenInstance.totalSupply();
 
-  it('should return ICO started bool to true', async () => {
-    const started = await gotCrowdSaleInstance.started();
+        activeInvestorBalance2.should.not.be.bignumber.equal(activeInvestorBalance1);
+        totalSupply2.should.not.be.bignumber.equal(totalSupply1);
+    });
 
-    assert.isTrue(started);
-  });
+    it('should return ICO started bool to true', async () => {
+        const started = await gotCrowdSaleInstance.started();
+        const ended = await gotCrowdSaleInstance.ended();
 
-  it('should be possible to pause the crowdsale by the owner', async () => {
-    logger.info('Crowdsale phase paused');
+        logger.info('now: ' + Date.now() + ' start: ' +  CROWDSALE_START_TIME);
 
-    await gotCrowdSaleInstance.pause({from: owner});
 
-    const paused = await gotCrowdSaleInstance.paused();
-    const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
+        assert.isTrue(started);
+        assert.isFalse(ended);
+    });
 
-    await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI}));
+    it('should be possible to pause the crowdsale by the owner', async () => {
+        logger.info('Crowdsale phase paused');
 
-    const activeInvestor2Balance = await gotTokenInstance.balanceOf(activeInvestor2);
+        await gotCrowdSaleInstance.pause({from: owner});
 
-    assert.isTrue(paused);
-    activeInvestor2Balance.should.be.bignumber.lessThan(100);
-  });
+        const paused = await gotCrowdSaleInstance.paused();
+        const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
 
-  it('should be possible to unpause the crowdsale by the owner', async () => {
-    logger.info('Crowdsale phase unpaused');
+        await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI}));
 
-    await gotCrowdSaleInstance.unpause({from: owner});
+        const activeInvestor2Balance = await gotTokenInstance.balanceOf(activeInvestor2);
 
-    const activeInvestor2Balance = await gotTokenInstance.balanceOf(activeInvestor2);
-    const paused = await gotCrowdSaleInstance.paused();
+        assert.isTrue(paused);
+        activeInvestor2Balance.should.be.bignumber.lessThan(100);
+    });
 
-    assert.isFalse(paused);
+    it('should be possible to unpause the crowdsale by the owner', async () => {
+        logger.info('Crowdsale phase unpaused');
 
-    const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
-    gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+        await gotCrowdSaleInstance.unpause({from: owner});
 
-    const activeInvestor2Balance2 = await gotTokenInstance.balanceOf(activeInvestor2);
+        const activeInvestor2Balance = await gotTokenInstance.balanceOf(activeInvestor2);
+        const paused = await gotCrowdSaleInstance.paused();
 
-    activeInvestor2Balance.should.be.bignumber.lessThan(activeInvestor2Balance2);
+        assert.isFalse(paused);
 
-    const availableTokens = await gotCrowdSaleInstance.availableTokens();
+        const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
+        gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
 
-    logger.info(availableTokens.c);
-  });
+        const activeInvestor2Balance2 = await gotTokenInstance.balanceOf(activeInvestor2);
 
-  /*it('should set capReached to true after big purchase', async () => {
-    const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
-    gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+        activeInvestor2Balance.should.be.bignumber.lessThan(activeInvestor2Balance2);
 
-    const capReached = await gotCrowdSaleInstance.capReached();
+        const availableTokens = await gotCrowdSaleInstance.availableTokens();
 
-    assert.isFalse(capReached);
-  });*/
+        logger.info(availableTokens.c);
+    });
+
+    it('should set capReached to true after big purchase', async () => {
+        const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
+        gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+
+        const capReached = await gotCrowdSaleInstance.capReached();
+
+        assert.isFalse(capReached);
+    });
 
     it('should not transfer tokens before ICO end', async () => {
-      await expectThrow(gotTokenInstance.transfer(activeInvestor3, 1, {from: activeInvestor1}));
+        await expectThrow(gotTokenInstance.transfer(activeInvestor3, 1, {from: activeInvestor1}));
 
-      const activeInvestor3Balance = await gotTokenInstance.balanceOf(activeInvestor3);
-      activeInvestor3Balance.should.be.bignumber.equal(0);
+        const activeInvestor3Balance = await gotTokenInstance.balanceOf(activeInvestor3);
+        activeInvestor3Balance.should.be.bignumber.equal(0);
     });
 
     it('should call closeCrowdsale only from the owner', async () => {

@@ -60,8 +60,6 @@ contract('GotPGOVault',(accounts) => {
   let gotTokenAddress;
   let PGOVaultAddress;
 
-
-
   beforeEach(async () => {
     gotCrowdSaleInstance = await GotCrowdSale.deployed();
     gotTokenAddress = await gotCrowdSaleInstance.token();
@@ -71,7 +69,7 @@ contract('GotPGOVault',(accounts) => {
   });
 
     it('should have unreleased amount equal to PGO_VAULT_CAP', async () => {
-        let balance = await PGOVaultInstance.unreleasedAmount();
+        const balance = await PGOVaultInstance.unreleasedAmount();
         balance.should.be.bignumber.equal(PGO_VAULT_CAP);
     });
 
@@ -82,7 +80,7 @@ contract('GotPGOVault',(accounts) => {
     });
 
     it('should have vested amount 0', async () => {
-        let vested = await PGOVaultInstance.vestedAmount();
+        const vested = await PGOVaultInstance.vestedAmount();
         log.info(vested);
         vested.should.be.bignumber.equal(new BigNumber(0));
     });
@@ -104,27 +102,25 @@ contract('GotPGOVault',(accounts) => {
     it('should release locked liquidity vested tokens 1', async () => {
         //force ico closing 
 
-        const lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
-        const vaultBalance1 = await gotTokenInstance.balanceOf(PGOVaultAddress);
+        let lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        let vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
 
         lockedLiquidityWalletBalance.should.be.bignumber.equal(0);
-        vaultBalance1.should.be.bignumber.equal(PGO_VAULT_CAP);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP);
 
-        let vested = await PGOVaultInstance.vestedAmount();
+        const vested = await PGOVaultInstance.vestedAmount();
         vested.should.be.bignumber.equal(PGO_VAULT_STEP1);
 
         await PGOVaultInstance.release();
 
-        const lockedLiquidityWalletBalance2 = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
-        const vaultBalance2 = await gotTokenInstance.balanceOf(PGOVaultAddress);
+        lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
 
-        log.info(lockedLiquidityWalletBalance2);
+        log.info(lockedLiquidityWalletBalance);
 
-        assert.notEqual(lockedLiquidityWalletBalance2, 0);
-        vaultBalance1.should.be.bignumber.equal(vaultBalance2.plus(lockedLiquidityWalletBalance2));
-
-        lockedLiquidityWalletBalance2.should.be.bignumber.equal(PGO_VAULT_STEP1);
-
+        lockedLiquidityWalletBalance.should.not.be.bignumber.equal(0);
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP1);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP - PGO_VAULT_STEP1);
     });
 
     it('should increase time to release 2', async () => {
@@ -133,30 +129,110 @@ contract('GotPGOVault',(accounts) => {
     });
 
     it('should release locked liquidity vested tokens 2', async () => {
-        //force ico closing 
-
-        const lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
-        const vaultBalance1 = await gotTokenInstance.balanceOf(PGOVaultAddress);
+        let lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        let vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
 
         lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP1);
-        //refactor to vaultcap - vault step1
-        //vaultBalance1.should.be.bignumber.equal(PGO_VAULT_CAP);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP - PGO_VAULT_STEP1);
 
-        let vested = await PGOVaultInstance.vestedAmount();
+        const vested = await PGOVaultInstance.vestedAmount();
         vested.should.be.bignumber.equal(PGO_VAULT_STEP2);
 
         await PGOVaultInstance.release();
 
-        const lockedLiquidityWalletBalance2 = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
-        const vaultBalance2 = await gotTokenInstance.balanceOf(PGOVaultAddress);
+        lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
 
-        log.info(lockedLiquidityWalletBalance2);
+        log.info(lockedLiquidityWalletBalance);
 
-        assert.notEqual(lockedLiquidityWalletBalance2, PGO_VAULT_STEP1);
-        vaultBalance1.should.be.bignumber.equal(vaultBalance2.plus(lockedLiquidityWalletBalance2));
-
-        lockedLiquidityWalletBalance2.should.be.bignumber.equal(PGO_VAULT_STEP2);
-
+        lockedLiquidityWalletBalance.should.not.be.bignumber.equal(PGO_VAULT_STEP1);
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP2);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP - PGO_VAULT_STEP2);
     });
 
+    it('should increase time to release 3', async () => {
+        log.info('[ Move Time to Vesting step 3]');
+        await waitNDays(180);
+    });
+
+    it('should release locked liquidity vested tokens 3', async () => {
+        let lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        let vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP2);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP - PGO_VAULT_STEP2);
+
+        const vested = await PGOVaultInstance.vestedAmount();
+        vested.should.be.bignumber.equal(PGO_VAULT_STEP3);
+
+        await PGOVaultInstance.release();
+
+        lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        log.info(lockedLiquidityWalletBalance);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP3);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP.minus(PGO_VAULT_STEP3));
+    });
+
+    it('should increase time to release 4', async () => {
+        log.info('[ Move Time to Vesting step 4]');
+        await waitNDays(180);
+    });
+
+    it('should release locked liquidity vested tokens 4', async () => {
+        let lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        let vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP3);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP.minus(PGO_VAULT_STEP3));
+
+        const vested = await PGOVaultInstance.vestedAmount();
+        vested.should.be.bignumber.equal(PGO_VAULT_STEP4);
+
+        await PGOVaultInstance.release();
+
+        lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        log.info(lockedLiquidityWalletBalance);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP4);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP - PGO_VAULT_STEP4);
+        vaultBalance.should.be.bignumber.equal(0);
+    });
+
+    it('should increase time to a time after vesting completion', async () => {
+        log.info('[ Move Time after vesting completion]');
+        await waitNDays(40);
+    });
+
+    it('should not not have any locked liquidity left to release', async () => {
+        let lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        let vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP4);
+        vaultBalance.should.be.bignumber.equal(PGO_VAULT_CAP - PGO_VAULT_STEP4);
+
+        const vested = await PGOVaultInstance.vestedAmount();
+        vested.should.be.bignumber.equal(PGO_VAULT_STEP4);
+
+        await expectThrow(PGOVaultInstance.release());
+
+        lockedLiquidityWalletBalance = await gotTokenInstance.balanceOf(lockedLiquidityWallet);
+        vaultBalance = await gotTokenInstance.balanceOf(PGOVaultAddress);
+
+        log.info(lockedLiquidityWalletBalance);
+
+        lockedLiquidityWalletBalance.should.be.bignumber.equal(PGO_VAULT_STEP4);
+        vaultBalance.should.be.bignumber.equal(0);
+    });
+
+    it('should finally have vault token amount equal to 0', async () => {
+        const lockedCap = await gotCrowdSaleInstance.PGO_LOCKED_LIQUIDITY_CAP();
+        const balance = await PGOVaultInstance.unreleasedAmount();
+        balance.should.not.be.bignumber.equal(lockedCap);
+        balance.should.be.bignumber.equal(0);
+    });
 });

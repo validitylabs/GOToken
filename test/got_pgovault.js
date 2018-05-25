@@ -36,9 +36,9 @@ const getKycData = (userAddr, userid, icoAddr, pk) => {
 
 const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
-const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 250 UAC tokens per ether
+const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     
 
-const VAULT_START_TIME = 1530003600;
+const VAULT_START_TIME = 1530003600;        // 26 June 2018 09:00:00 GMT
 
 /*TOKEN CAPS*/
 const PGO_VAULT_CAP = new BigNumber(3.5e7 * 1e18);
@@ -48,9 +48,6 @@ const PGO_VAULT_STEP3 = new BigNumber(2.625e7 * 1e18);
 const PGO_VAULT_STEP4 = new BigNumber(3.5e7 * 1e18);
 
 contract('GotPGOVault',(accounts) => {
-  //const owner = accounts[0];
-  //const activeInvestor = accounts[1];
-
   const lockedLiquidityWallet = accounts[9];
 
   // Provide gotTokenInstance for every test case

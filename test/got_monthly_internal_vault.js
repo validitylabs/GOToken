@@ -39,15 +39,15 @@ const getKycData = (userAddr, userid, icoAddr, pk) => {
 
 const USD_PER_TOKEN = 1;
 const USD_PER_ETHER = 700;
-const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 250 UAC tokens per ether
+const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     
 
-const VAULT_START_TIME = 1553331600;      // 23 March 2018 09:00:00 GMT
+const VAULT_START_TIME = 1530003600;      // 26 June 2018 09:00:00 GMT
 
 contract('PGOMonthlyInternalVault',(accounts) => {
     const owner = accounts[0];
     const activeInvestor = accounts[1];
     const beneficiary1 = accounts[6];
-    const INTERNAL_BALANCE1 = 2.5e7 * 1e18;
+    const beneficiary1_balance = new BigNumber(2.5e7 * 1e18);
 
 
     // Provide gotTokenInstance for every test case
@@ -63,24 +63,52 @@ contract('PGOMonthlyInternalVault',(accounts) => {
         pgoMonthlyInternalVaultInstance = await PGOMonthlyInternalVault.deployed();
     });
 
-    it('should match the list of beneficiaries with the test list', async () => {
-        let investors = await pgoMonthlyInternalVaultInstance.getInvestment(0);
-        log.info(investors);
+    it('should check investment data with deployed one', async () => {
+        let investor = await pgoMonthlyInternalVaultInstance.getInvestment(0);
+        investor[0].should.be.equal(beneficiary1);
+        investor[1].should.be.bignumber.equal(beneficiary1_balance);
+        investor[2].should.be.bignumber.equal(new BigNumber(0));
     });
 
-    /*
-    it('should have vested pgolocked tokens', async () => {
-        const balance = await pgoMonthlyInternalVaultInstance.unreleasedAmount();
-        log.info(balance);
+    
+    it('should have vested pgo tokens', async () => {
+        const balance = await gotTokenInstance.balanceOf(pgoMonthlyInternalVaultInstance.address);
+        balance.should.be.bignumber.equal(beneficiary1_balance);
     });
 
-    it('should increase time to internal vault vesting start time', async () => {
-        logger.info('Vesting phase started');
-        await increaseTimeTo(VAULT_START_TIME + 1000000);
+    it('should increase time to ICO END', async () => {
+        log.info('[ ICO END TIME ]');
+        await increaseTimeTo(VAULT_START_TIME);
+
+        await gotCrowdSaleInstance.finalise();
+        log.info('[ Finalized ]');
     });
 
-    it('should match the list of beneficiaries with the test list', async () => {
-        const releasableAmount = pgoMonthlyInternalVaultInstance.releasableAmount(beneficiary1);
-        releasableAmount.assert.equal.bignumber(INTERNAL_BALANCE1);
-    });*/
+    it('should check unlocked tokens before 9 month are 0', async () => {
+        let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+        let vaultBalance = await gotTokenInstance.balanceOf(pgoMonthlyInternalVaultInstance.address);
+
+        beneficiary1Balance.should.be.bignumber.equal(0);
+        vaultBalance.should.be.bignumber.equal(beneficiary1_balance);
+
+        let vested = await pgoMonthlyInternalVaultInstance.vestedAmount(beneficiary1);
+        vested.should.be.bignumber.equal(0);
+
+        //it will launch revert because releasable funds are 0
+        await expectThrow(pgoMonthlyInternalVaultInstance.release(beneficiary1));
+    });
+
+    it('should check 1/27 of token are unlocked after 10 month ', async () => {
+
+        await waitNDays(300);
+        await pgoMonthlyInternalVaultInstance.release(beneficiary1);
+
+        beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
+
+        div27BeneficiaryBalance = beneficiary1_balance.div(27);
+        
+        div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1_balance);
+
+        
+    });
 });

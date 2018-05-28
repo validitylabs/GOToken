@@ -21,7 +21,6 @@ contract('GotToken',(accounts) => {
     });
 
     it('should instantiate the ICO token correctly', async () => {
-        const isOwnerAccountZero = await gotTokenInstance.owner();
         const name = await gotTokenInstance.name();
         const symbol = await gotTokenInstance.symbol();
         const decimals = await gotTokenInstance.decimals();
@@ -29,7 +28,6 @@ contract('GotToken',(accounts) => {
         logger.info(accounts[0]);
         logger.info(accounts[1]);
 
-        isOwnerAccountZero.should.equal(owner);
         name.should.equal('GOToken');
         symbol.should.equal('GOT');
         decimals.should.be.bignumber.equal(18, 'Decimals does not match');

@@ -26,8 +26,8 @@ module.exports = function(deployer, network, accounts) {
         gotInstance = x;
         GotCrowdSale.at(GotCrowdSale.address).then(crowdInstance => {
             gotCrowdSaleInstance = crowdInstance;
-            gotInstance.transferOwnership(GotCrowdSaleInstance.address).then(() => {
-                console.log('[ Token ownership transferred to] '+ GotCrowdSaleInstance.address);
+            gotInstance.transferOwnership(GotCrowdSale.address).then(() => {
+                console.log('[ Token ownership transferred to] '+ GotCrowdSale.address);
                 gotCrowdSaleInstance.mintPreAllocatedTokens().then(() => {
                     console.log('[ UnlockedLiquidity minted, LockedLiquidity moved to PGOVAULT]');
                     gotCrowdSaleInstance.initPGOMonthlyInternalVault(internalAddresses, internalBalances).then(() => {

@@ -159,12 +159,15 @@ contract GotCrowdSale is CrowdsaleBase {
      */
     function mintReservation(address[] beneficiaries, uint256[] balances) public onlyOwner {
         require(beneficiaries.length == balances.length);
+
         uint256 totalReservationBalance = 0;
         uint256 balancesLength = balances.length;
+
         for(uint256 i = 0; i < balancesLength; i++) {
             totalReservationBalance = totalReservationBalance.add(balances[i]);
         }
-        require(totalReservationBalance<=RESERVATION_CAP);
+
+        require(totalReservationBalance <= RESERVATION_CAP);
 
         for(uint256 z = 0; z < balancesLength; z++) {
             uint256 amount = balances[z];
@@ -189,6 +192,7 @@ contract GotCrowdSale is CrowdsaleBase {
      */
     function finalise() public onlyOwner {
         require(didOwnerEndCrowdsale || block.timestamp > end || capReached);
+
         token.finishMinting();
         token.unpause();
 

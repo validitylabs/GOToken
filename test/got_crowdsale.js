@@ -59,7 +59,7 @@ const PRESALE_VAULT_CAP = new BigNumber(1.35e7 * 1e18);
 const PGO_VAULT_CAP = new BigNumber(3.5e7 * 1e18);
 const CROWDSALE_CAP = new BigNumber(1.15e7 * 1e18);
 const RESERVATION_CAP = new BigNumber(0.875e7 * 1e18);
-
+const TOTAL_SUPPLY = new BigNumber(10e7 * 1e18);
 
 
 contract('GotCrowdSale',(accounts) => {
@@ -111,8 +111,6 @@ contract('GotCrowdSale',(accounts) => {
         startTime.should.be.bignumber.equal(CROWDSALE_START_TIME);
         endTime.should.be.bignumber.equal(CROWDSALE_END_TIME);
         totalTokens.should.be.bignumber.equal(CROWDSALE_CAP);
-        //remaining tokens should be equal to CROWDSALE_CAP - RC (11500000 - 8000000 = 3500000)
-        remainingTokens.should.be.bignumber.equal(CROWDSALE_CAP.sub(tokensSold));
         _wallet.should.equal(wallet);
         _unlockedLiquidityWallet.should.equal(unlockedLiquidityWallet);
         _lockedLiquidityWallet.should.equal(lockedLiquidityWallet);
@@ -121,6 +119,9 @@ contract('GotCrowdSale',(accounts) => {
         lockedLiquidityCap.should.be.bignumber.equal(PGO_VAULT_CAP);
         reservedPresaleCap.should.be.bignumber.equal(PRESALE_VAULT_CAP);
         reservationCap.should.be.bignumber.equal(RESERVATION_CAP);
+        tokensSold.should.be.bignumber.below(RESERVATION_CAP);
+        //remaining tokens should be equal to CROWDSALE_CAP - RC (11500000 - 8000000 = 3500000)
+        remainingTokens.should.be.bignumber.equal(CROWDSALE_CAP.sub(tokensSold));
     });
 
     it('should instantiate the internal vault correctly', async () => {
@@ -149,6 +150,14 @@ contract('GotCrowdSale',(accounts) => {
         const unlockedLiquidity = await gotTokenInstance.balanceOf(unlockedLiquidityAddress);
         unlockedLiquidity.should.be.bignumber.equal(PGO_UNLOCKED_LIQUIDITY_CAP);
         // gotCrowdSaleInstance.mintPreAllocatedTokens(); is already called in deploy phase
+    });
+
+    it('should fail, closeCrowdsale cannot be called before ICO start', async () => {
+        await expectThrow(gotCrowdSaleInstance.closeCrowdsale({from: owner}));
+    });
+
+    it('should fail, finalise cannot be called before ICO start', async () => {
+        await expectThrow(gotCrowdSaleInstance.finalise({from: owner}));
     });
 
     it('should fail, buyTokens method can not be called before crowdsale phase starts', async () => {
@@ -183,21 +192,30 @@ contract('GotCrowdSale',(accounts) => {
         const unlockedLiquidity = await gotTokenInstance.balanceOf(unlockedLiquidityAddress);
         const tokensSold = await gotCrowdSaleInstance.tokensSold();
         const remainingTokens = await gotCrowdSaleInstance.remainingTokens();
-        const totalSupply = await gotTokenInstance.totalSupply();
+        const totalMintedSupply = await gotTokenInstance.totalSupply();
+        const totalSupply = totalMintedSupply.add(remainingTokens);
 
-        logger.info(internalVaultBalance + " " + presaleVaultBalance + " " + pgoVaultBalance + " " + unlockedLiquidity + " " + tokensSold + " " + remainingTokens);
+        logger.info(totalSupply);
+        logger.info(internalVaultBalance);
+        logger.info(presaleVaultBalance);
+        logger.info(pgoVaultBalance);
+        logger.info(unlockedLiquidity);
+        logger.info(tokensSold);
+        logger.info(remainingTokens);
 
-        //2500000 tokens missing
-        totalSupply.should.be.bignumber.equal(internalVaultBalance
-            .plus(presaleVaultBalance)
-            .plus(pgoVaultBalance)
-            .plus(unlockedLiquidity)
-            .plus(tokensSold)
-            .plus(remainingTokens)
+        totalMintedSupply.should.be.bignumber.equal(
+            internalVaultBalance        // 25mil
+            .plus(presaleVaultBalance)  // 13.5 mil
+            .plus(pgoVaultBalance)      // 35 mil
+            .plus(unlockedLiquidity)    // 15 mil
+            .plus(tokensSold)           // 8 mil
         );
+
+        totalSupply.should.be.bignumber.equal(TOTAL_SUPPLY);
     });
 
     it('should buyTokens', async () => {
+        const price = await gotCrowdSaleInstance.price();
         const activeInvestorBalance1 = await gotTokenInstance.balanceOf(activeInvestor1);
         const totalSupply1 = await gotTokenInstance.totalSupply();
 
@@ -207,10 +225,13 @@ contract('GotCrowdSale',(accounts) => {
         const activeInvestorBalance2 = await gotTokenInstance.balanceOf(activeInvestor1);
         const totalSupply2 = await gotTokenInstance.totalSupply();
 
+        price.should.be.bignumber.equal(TOKEN_PER_ETHER);
+
         activeInvestorBalance2.should.not.be.bignumber.equal(activeInvestorBalance1);
 
         //may add the amount of tokens the investor1 should have as a global const and add it to totalSupply1
         totalSupply2.should.not.be.bignumber.equal(totalSupply1);
+        //may add remaining tokens check as ICO SUPPLY - token.balanceOf(activeInbestorBalance)
     });
 
     it('should be possible to pause the crowdsale by the owner', async () => {
@@ -260,13 +281,19 @@ contract('GotCrowdSale',(accounts) => {
         await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI}));
 
         assert.isTrue(capReached);
+
+        //check also if remaining tokens are 0
     });
 
     it('should not transfer tokens before ICO end', async () => {
         await expectThrow(gotTokenInstance.transfer(activeInvestor3, 1, {from: activeInvestor1}));
 
         const activeInvestor3Balance = await gotTokenInstance.balanceOf(activeInvestor3);
+        const activeInvestor1Balance = await gotTokenInstance.balanceOf(activeInvestor1);
         activeInvestor3Balance.should.be.bignumber.equal(0);
+        //modify to make it equal to investor1_token_amount
+        activeInvestor1Balance.should.not.be.equal(0);
+
     });
 
     it('should call closeCrowdsale only from the owner', async () => {

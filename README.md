@@ -30,8 +30,8 @@
   The ownership of the GotToken contract will be transferred to the Crowdsale contract's owner.
 
 ###### Reservation contract phase
-    The Reservation contract phase is intended to be part of the ICO phase and so it is entirely managed inside the `GotCrowdSale.sol` contract.
-    The `gotCrowdSaleInstance.mintReservation(beneficiary, balances)` does not instantiate an external contract, but it directly manages the vesting of tokens to the RC investors. 
+* The Reservation contract phase is intended to be part of the ICO phase and so it is entirely managed inside the `GotCrowdSale.sol` contract.
+* The `gotCrowdSaleInstance.mintReservation(beneficiary, balances)` does not instantiate an external contract, but it directly manages the vesting of tokens to the RC investors.
 
 ## Vesting phases
 * Presale investor can claim the vested tokens by calling `pgoMonthlyPresaleVault.release()`.  

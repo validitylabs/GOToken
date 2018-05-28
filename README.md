@@ -154,6 +154,7 @@ truffle compile
 truffle migrate
 
 # Test the contract
+ganache-cli --defaultBalanceEther 8000000000000000000000 --port 7545
 truffle test `./test/testfilename`
 ```
 

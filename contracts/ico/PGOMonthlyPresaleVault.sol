@@ -15,6 +15,7 @@ import "./GotCrowdSale.sol";
 import "./GotToken.sol";
 import "./PGOMonthlyInternalVault.sol";
 
+
 contract PGOMonthlyPresaleVault is PGOMonthlyInternalVault {
     /**
      * @dev OVERRIDE vestedAmount from PGOMonthlyInternalVault
@@ -22,9 +23,7 @@ contract PGOMonthlyPresaleVault is PGOMonthlyInternalVault {
      * @param beneficiary The address that will receive the vested tokens.
      */
     function vestedAmount(address beneficiary) public view returns (uint256) {
-
         uint256 investmentIndex = investorLUT[beneficiary];
-
         uint256 vested = 0;
 
         if (block.timestamp >= start) {
@@ -49,5 +48,4 @@ contract PGOMonthlyPresaleVault is PGOMonthlyInternalVault {
         return vested;
     }
 }
-
 

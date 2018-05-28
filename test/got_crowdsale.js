@@ -18,7 +18,7 @@ const SIGNER_PK = Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4
 const SIGNER_ADDR = '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase();
 const OTHER_PK = Buffer.from('0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1', 'hex');
 const OTHER_ADDR = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef'.toLowerCase();
-const MAX_AMOUNT = '5000000000000000000';
+const MAX_AMOUNT = '7000000000000000000000';
 
 const getKycData = (userAddr, userid, icoAddr, pk) => {
     // sha256("Eidoo icoengine authorization", icoAddress, buyerAddress, buyerId, maxAmount);
@@ -47,6 +47,8 @@ const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 7
 // First investment: activeInvestor1
 const INVESTOR1_WEI = 1e18;
 const INVESTOR2_WEI = 5e18;
+const INVESTOR2_WEI2 = new BigNumber(6994 * 1e18);
+
 const INVESTOR1_TOKEN_AMOUNT = 270 * 1e18;
 
 /*TOKEN CAPS*/
@@ -85,9 +87,15 @@ contract('GotCrowdSale',(accounts) => {
         signer0.should.be.equal('0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase());
     });
 
-    it('should transfer unlocked liquidity to correct wallet', async () => {
-
-    });
+    /*it('should transfer unlocked liquidity to correct wallet', async () => {
+        let unlockedLiquidity = await gotCrowdSaleInstance.pgoUnlockedLiquidityWallet();
+        //unlockedLiquidity.should.be.bignumber.equal(0);
+        logger.info(unlockedLiquidity);
+        await gotCrowdSaleInstance.mintPreAllocatedTokens();
+        unlockedLiquidity = await gotCrowdSaleInstance.pgoUnlockedLiquidityWallet();
+        logger.info(unlockedLiquidity);
+        unlockedLiquidity.should.not.be.bignumber.equal(0);
+    });*/
 
     it('should instantiate the internal vault correctly', async () => {
         internalVaultAddress = await gotCrowdSaleInstance.pgoMonthlyInternalVault();
@@ -177,7 +185,7 @@ contract('GotCrowdSale',(accounts) => {
         assert.isFalse(paused);
 
         const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
-        gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+        await gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
 
         const activeInvestor2Balance2 = await gotTokenInstance.balanceOf(activeInvestor2);
 
@@ -190,11 +198,13 @@ contract('GotCrowdSale',(accounts) => {
 
     it('should set capReached to true after big purchase', async () => {
         const d = getKycData(activeInvestor2, 2, gotCrowdSaleInstance.address, SIGNER_PK);
-        gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI});
+        await gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI2});
 
         const capReached = await gotCrowdSaleInstance.capReached();
 
-        assert.isFalse(capReached);
+        await expectThrow(gotCrowdSaleInstance.buyTokens(d.id, d.max, d.v, d.r, d.s, {from: activeInvestor2, value: INVESTOR2_WEI}));
+
+        assert.isTrue(capReached);
     });
 
     it('should not transfer tokens before ICO end', async () => {

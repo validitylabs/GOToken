@@ -14,6 +14,7 @@ import "../../node_modules/openzeppelin-solidity/contracts/token/ERC20/SafeERC20
 import "./GotCrowdSale.sol";
 import "./GotToken.sol";
 
+
 contract PGOMonthlyInternalVault {
     using SafeMath for uint256;
     using SafeERC20 for GotToken;
@@ -41,10 +42,12 @@ contract PGOMonthlyInternalVault {
     mapping(address => uint256) public investorLUT;
 
     /**
-     * @dev Function to be fired by the initPGOMonthlyInternalVault function from the GotCrowdSale contract to set the InternalVault's state after deployment.
+     * @dev Function to be fired by the initPGOMonthlyInternalVault function from the GotCrowdSale contract to set the
+     * InternalVault's state after deployment.
      * @param beneficiaries Array of the internal investors addresses to whom vested tokens are transferred.
      * @param balances Array of token amount per beneficiary.
-     * @param startTime Start time at which the first released will be executed, and from which the cliff for second release is calculated.
+     * @param startTime Start time at which the first released will be executed, and from which the cliff for second
+     * release is calculated.
      * @param _token The address of the GOT Token.
      */
     function init(address[] beneficiaries, uint256[] balances, uint256 startTime, address _token) public {
@@ -65,14 +68,6 @@ contract PGOMonthlyInternalVault {
     }
 
     /**
-     * @dev Allows to check an investement .
-     * @param index The index of investment to check.
-     */
-    function getInvestment(uint index) public view returns(address, uint256, uint256) {
-        return (investments[index].beneficiary,investments[index].totalBalance,investments[index].released);
-    }
-
-    /**
      * @dev Allows a sender to transfer vested tokens to the beneficiary's address.
      * @param beneficiary The address that will receive the vested tokens.
      */
@@ -90,6 +85,14 @@ contract PGOMonthlyInternalVault {
      */
     function release() public {
         release(msg.sender);
+    }
+
+    /**
+     * @dev Allows to check an investment.
+     * @param index The index of investment to check.
+     */
+    function getInvestment(uint index) public view returns(address, uint256, uint256) {
+        return (investments[index].beneficiary,investments[index].totalBalance,investments[index].released);
     }
 
     /**
@@ -126,5 +129,4 @@ contract PGOMonthlyInternalVault {
         return vested;
     }
 }
-
 

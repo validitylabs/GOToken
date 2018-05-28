@@ -13,8 +13,8 @@ import "../../node_modules/openzeppelin-solidity/contracts/ownership/CanReclaimT
 import "./KYCBase.sol";
 import "./ICOEngineInterface.sol";
 
-contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase {
 
+contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase {
     /*** CONSTANTS ***/
     uint256 public constant USD_PER_TOKEN = 1;                        //
     uint256 public constant USD_PER_ETHER = 700;                      // @TODO: adjust on deployment date
@@ -111,7 +111,8 @@ contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase
 
     /**
      * @dev Implements the ICOEngineInterface.
-     * @return The number of the tokens available for the ico. At the moment the ico starts it must be equal to totalTokens(),
+     * @return The number of the tokens available for the ico.
+     * At the moment the ico starts it must be equal to totalTokens(),
      * then it will decrease.
      */
     function remainingTokens() public view returns(uint) {
@@ -129,7 +130,8 @@ contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase
     }
 
     /**
-     * @dev Implements the KYCBase releaseTokensTo function to mint tokens for an investor. Called after the KYC process has passed.
+     * @dev Implements the KYCBase releaseTokensTo function to mint tokens for an investor.
+     * Called after the KYC process has passed.
      * @return A bollean that indicates if the operation was successful.
      */
     function releaseTokensTo(address buyer) internal returns(bool) {
@@ -160,7 +162,8 @@ contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase
     }
 
     /**
-     * @dev Fired by the releaseTokensTo function after minting tokens, to forward the raised wei to the address that collects funds.
+     * @dev Fired by the releaseTokensTo function after minting tokens,
+     * to forward the raised wei to the address that collects funds.
      * @param _weiAmount Amount of wei send by the investor.
      */
     function forwardFunds(uint256 _weiAmount) internal {
@@ -185,7 +188,4 @@ contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase
     */
     function mintTokens(address to, uint256 amount) private;
 }
-
-
-
 

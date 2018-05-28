@@ -1,7 +1,7 @@
 pragma solidity ^0.4.19;
 
-
 import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 
 // Abstract base contract
 contract KYCBase {
@@ -18,14 +18,9 @@ contract KYCBase {
         }
     }
 
-    // Must be implemented in descending contract to assign tokens to the buyers. Called after the KYC verification is passed
-    function releaseTokensTo(address buyer) internal returns(bool);
-
-    // This method can be overridden to enable some sender to buy token for a different address
-    function senderAllowedFor(address buyer)
-        internal view returns(bool)
-    {
-        return buyer == msg.sender;
+    // No payable fallback function, the tokens must be buyed using the functions buyTokens and buyTokensFor
+    function () public {
+        revert();
     }
 
     function buyTokensFor(address buyerAddress, uint64 buyerId, uint maxAmount, uint8 v, bytes32 r, bytes32 s)
@@ -39,6 +34,17 @@ contract KYCBase {
         public payable returns (bool)
     {
         return buyImplementation(msg.sender, buyerId, maxAmount, v, r, s);
+    }
+
+    // Must be implemented in descending contract to assign tokens to the buyers.
+    // Called after the KYC verification is passed
+    function releaseTokensTo(address buyer) internal returns(bool);
+
+    // This method can be overridden to enable some sender to buy token for a different address
+    function senderAllowedFor(address buyer)
+        internal view returns(bool)
+    {
+        return buyer == msg.sender;
     }
 
     function buyImplementation(address buyerAddress, uint64 buyerId, uint maxAmount, uint8 v, bytes32 r, bytes32 s)
@@ -58,9 +64,5 @@ contract KYCBase {
         }
         return true;
     }
-
-    // No payable fallback function, the tokens must be buyed using the functions buyTokens and buyTokensFor
-    function () public {
-        revert();
-    }
 }
+

@@ -12,8 +12,8 @@ import "./GotToken.sol";
 import "./PGOMonthlyPresaleVault.sol";
 import "./PGOMonthlyInternalVault.sol";
 
-contract GotCrowdSale is CrowdsaleBase {
 
+contract GotCrowdSale is CrowdsaleBase {
     /*** CONSTANTS ***/
     uint256 public constant START_TIME = 1528794000;                     // 12 June 2018 09:00:00 GMT
     uint256 public constant END_TIME = 1530003600;                       // 26 June 2018 09:00:00 GMT
@@ -25,7 +25,6 @@ contract GotCrowdSale is CrowdsaleBase {
     uint256 public constant PGO_UNLOCKED_LIQUIDITY_CAP = 1.5e7 * 1e18;
     //Locked company liquidity
     uint256 public constant PGO_LOCKED_LIQUIDITY_CAP = 3.5e7 * 1e18;
-
     //Reserved Presale Allocation  33% free and 67% locked using Monthly Presale Vault
     uint256 public constant RESERVED_PRESALE_CAP = 1.35e7 * 1e18;
 
@@ -47,10 +46,8 @@ contract GotCrowdSale is CrowdsaleBase {
 
     // Vesting wallets.
     address public pgoLockedLiquidityWallet;
-
     //Unlocked wallets
     address public pgoUnlockedLiquidityWallet;
-
     //ether wallet
     address public wallet;
 
@@ -93,7 +90,8 @@ contract GotCrowdSale is CrowdsaleBase {
     }
 
     /**
-     * @dev Mints unlocked tokens to unlockedLiquidityWallet and assings tokens to be held into the locked liquidity vault contracts. 
+     * @dev Mints unlocked tokens to unlockedLiquidityWallet and
+     * assings tokens to be held into the locked liquidity vault contracts.
      * To be called by the crowdsale's owner only.
      */
     function mintPreAllocatedTokens() public onlyOwner {
@@ -102,9 +100,12 @@ contract GotCrowdSale is CrowdsaleBase {
     }
 
     /**
-     * @dev Sets the state of the internal monthly locked vault contract and mints tokens. It will contains all TEAM, FOUNDER, ADVISOR and PARTNERS tokens
-     * all token are locked for the first 9 months and then unlocked monthly. It will check that all internal token are correctly allocated
-     * So far, the internal monthly vault contract has been deployed and this function needs to be called to set its investments and vesting conditions.
+     * @dev Sets the state of the internal monthly locked vault contract and mints tokens.
+     * It will contains all TEAM, FOUNDER, ADVISOR and PARTNERS tokens.
+     * All token are locked for the first 9 months and then unlocked monthly.
+     * It will check that all internal token are correctly allocated.
+     * So far, the internal monthly vault contract has been deployed and this function
+     * needs to be called to set its investments and vesting conditions.
      * @param beneficiaries Array of the internal addresses to whom vested tokens are transferred.
      * @param balances Array of token amount per beneficiary.
      */
@@ -125,9 +126,11 @@ contract GotCrowdSale is CrowdsaleBase {
 
     /**
      * @dev Sets the state of the reserved presale vault contract and mints reserved presale tokens. 
-     * It will contains all reserved PRESALE token, 1/3 of tokens are free and the remaining are locked for the first 9 months and then unlocked monthly.
-     * It will check that all reserved presale token are correctly allocated
-     * So far, the monthly presale vault contract has been deployed and this function needs to be called to set its investments and vesting conditions.
+     * It will contains all reserved PRESALE token,
+     * 1/3 of tokens are free and the remaining are locked for the first 9 months and then unlocked monthly.
+     * It will check that all reserved presale token are correctly allocated.
+     * So far, the monthly presale vault contract has been deployed and
+     * this function needs to be called to set its investments and vesting conditions.
      * @param beneficiaries Array of the presale investors addresses to whom vested tokens are transferred.
      * @param balances Array of token amount per beneficiary.
      */
@@ -147,8 +150,10 @@ contract GotCrowdSale is CrowdsaleBase {
     }
 
     /**
-     * @dev Mint all token collected by second private presale (called reservation), all KYC control are made outside contract under responsability of ParkinGO.
-     * Also, updates tokensSold and availableTokens in the crowdsale contract, it checks that sold token are less than reservation contract cap.
+     * @dev Mint all token collected by second private presale (called reservation),
+     * all KYC control are made outside contract under responsability of ParkinGO.
+     * Also, updates tokensSold and availableTokens in the crowdsale contract,
+     * it checks that sold token are less than reservation contract cap.
      * @param beneficiaries Array of the reservation user that bought tokens in private reservation sale.
      * @param balances Array of token amount per beneficiary.
      */
@@ -172,6 +177,29 @@ contract GotCrowdSale is CrowdsaleBase {
     }
 
     /**
+     * @dev Allows the owner to close the crowdsale manually before the end time.
+     */
+    function closeCrowdsale() public onlyOwner {
+        require(block.timestamp >= START_TIME && block.timestamp < END_TIME);
+        didOwnerEndCrowdsale = true;
+    }
+
+    /**
+     * @dev Allows the owner to unpause tokens, stop minting and transfer ownership of the token contract.
+     */
+    function finalise() public onlyOwner {
+        require(didOwnerEndCrowdsale || block.timestamp > end || capReached);
+        token.finishMinting();
+        token.unpause();
+
+        // Token contract extends CanReclaimToken so the owner can recover
+        // any ERC20 token received in this contract by mistake.
+        // So far, the owner of the token contract is the crowdsale contract.
+        // We transfer the ownership so the owner of the crowdsale is also the owner of the token.
+        token.transferOwnership(owner);
+    }
+
+    /**
      * @dev Implements the price function from EidooEngineInterface.
      * @notice Calculates the price as tokens/ether based on the corresponding bonus bracket.
      * @return Price as tokens/ether.
@@ -188,28 +216,6 @@ contract GotCrowdSale is CrowdsaleBase {
      */
     function mintTokens(address to, uint256 amount) private {
         token.mint(to, amount);
-    }
-
-    /**
-     * @dev Allows the owner to close the crowdsale manually before the end time.
-     */
-    function closeCrowdsale() public onlyOwner {
-        require(block.timestamp >= START_TIME && block.timestamp < END_TIME);
-        didOwnerEndCrowdsale = true;
-    }
-
-    /**
-     * @dev Allows the owner to unpause tokens, stop minting and transfer ownership of the token contract.
-     */
-    function finalise() public onlyOwner {
-        require(didOwnerEndCrowdsale || block.timestamp > end || capReached);
-        token.finishMinting();
-        token.unpause();
-
-        // Token contract extends CanReclaimToken so the owner can recover any ERC20 token received in this contract by mistake.
-        // So far, the owner of the token contract is the crowdsale contract.
-        // We transfer the ownership so the owner of the crowdsale is also the owner of the token.
-        token.transferOwnership(owner);
     }
 }
 

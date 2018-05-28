@@ -14,6 +14,7 @@ import "../../node_modules/openzeppelin-solidity/contracts/token/ERC20/SafeERC20
 import "./GotCrowdSale.sol";
 import "./GotToken.sol";
 
+
 contract PGOVault {
     using SafeMath for uint256;
     using SafeERC20 for GotToken;
@@ -98,5 +99,4 @@ contract PGOVault {
         return unreleased.sub(released);
     }
 }
-
 

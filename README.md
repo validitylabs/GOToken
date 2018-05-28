@@ -72,7 +72,7 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
     * Continuous vesting of remaining 2⁄3 tokens: starts 9 months after the end of ICO
     and ends 36 months later.
     * 60% Discount
-    * 1 token 0,30 usd
+    * 1 token 0.30 usd
 
  * Partner Pre-sale
     * Already finished.
@@ -97,7 +97,7 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
     * 20% discount
     * Private invitation only
     * Require previous KYC Eidoo verification
-    * 1 Token 0,6 usd
+    * 1 Token 0.6 usd
 * Public ICO
     * 2.750.000 tokens plus all not sold during Reservation contract phase
     * 1 Token 0.75 usd

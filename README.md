@@ -29,6 +29,10 @@
 
   The ownership of the GotToken contract will be transferred to the Crowdsale contract's owner.
 
+###### Reservation contract phase
+    The Reservation contract phase is intended to be part of the ICO phase and so it is entirely managed inside the `GotCrowdSale.sol` contract.
+    The `gotCrowdSaleInstance.mintReservation(beneficiary, balances)` does not instantiate an external contract, but it directly manages the vesting of tokens to the RC investors. 
+
 ## Vesting phases
 * Presale investor can claim the vested tokens by calling `pgoMonthlyPresaleVault.release()`.  
 Tokens can be transferred by a sender to the beneficiary's address, when calling `pgoMonthlyPresaleVault.release(beneficiary)`
@@ -97,7 +101,7 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
     * 20% discount
     * Private invitation only
     * Require previous KYC Eidoo verification
-    * 1 Token 0.6 usd
+
 * Public ICO
     * 2.750.000 tokens plus all not sold during Reservation contract phase
     * 1 Token 0.75 usd
@@ -115,7 +119,7 @@ __nvmrc support for windows users is not given, please make sure you are using t
 For the Rinkeby and MainNet deployment, you need Geth on your machine.
 Follow the [installation instructions](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum) for your OS.
 
-Depending on your system the following components might be already available or have to be provided manually:
+Depending on your system, the following components might be already available or have to be provided manually:
 * [Python](https://www.python.org/downloads/windows/) 2.7 Version only! Windows users should put python into the PATH by cheking the mark in installation process. The windows build tools contain python, so you don't have to install this manually.
 * GIT, should be already installed on *nix systems. Windows users have to install [GIT](http://git-scm.com/download/win) manually.
 * On Windows systems, PowerShell is mandatory

@@ -68,32 +68,41 @@ https://github.com/eidoo/icoengine/blob/master/contracts/ICOEngineInterface.sol
 https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
 
 ###### Token allocation
+* Business fund
+    * 35.000.000 tokens.
+    * ¼ tokens unlocked 12 months after the end of ICO.
+    * remaining ¾ unlocked 18, 24 and 30 months after the end of ICO.
+    
+* Unlocked liquidity
+    * 15.000.000 tokens.
+    * Can be used for bounty programs and airdrop.
+
 * Family Pre-sale
     * Already finished.
     * List of Presale investors wallet with GOT amount.
     * 13.500.000 tokens.
     * 1⁄3 tokens unlocked right after the end of ICO.
-    * Continuous vesting of remaining 2⁄3 tokens: starts 9 months after the end of ICO
-    and ends 36 months later.
+    * Continuous vesting of remaining 2⁄3 tokens: starts 3 months after the end of ICO
+    and ends 21 months later.
     * 60% Discount
-    * 1 token 0.30 usd
+    * 1 token = 0.30 usd
 
- * Partner Pre-sale
+ * Partners Pre-sale
     * Already finished.
     * List of Presale investors wallet with GOT amount.
     * 10.000.000 tokens.
-    * Continuous vesting: starts 9 months after the end of ICO and ends 36 months
+    * Continuous vesting: starts 3 months after the end of ICO and ends 21 months
     later.
 
 * Founders
     * 10.000.000 tokens assigned to a unique wallet address.
-    * Continuous vesting: starts 9 months after the end of ICO and ends 36 months
+    * Continuous vesting: starts 3 months after the end of ICO and ends 21 months
     later.
 
 * Advisors
     * List of Advisors wallet with GOT amount.
     * 5.000.000 tokens.
-    * Continuous vesting: starts 9 months after the end of ICO and ends 36 months
+    * Continuous vesting: starts 3 months after the end of ICO and ends 21 months
     later.
 
 * Reservation contract
@@ -104,7 +113,7 @@ https://github.com/eidoo/icoengine/blob/master/contracts/KYCBase.sol
 
 * Public ICO
     * 2.750.000 tokens plus all not sold during Reservation contract phase
-    * 1 Token 0.75 usd
+    * 1 Token = 0.75 usd
 
 
 ## Requirements

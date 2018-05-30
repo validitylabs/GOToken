@@ -26,10 +26,10 @@ contract PGOMonthlyInternalVault {
     }
 
     /*** CONSTANTS ***/
-    uint256 public constant VESTING_DIV_RATE = 27;                   // division rate of monthly vesting
+    uint256 public constant VESTING_DIV_RATE = 21;                   // division rate of monthly vesting
     uint256 public constant VESTING_OFFSETS = 30 days;               // vesting interval
-    uint256 public constant VESTING_CLIFF = 270 days;                // vesting interval
-    uint256 public constant VESTING_DURATION = 1080 days;            // vesting duration
+    uint256 public constant VESTING_CLIFF = 90 days;                // vesting interval
+    uint256 public constant VESTING_DURATION = 720 days;            // vesting duration
 
     GotToken public token;
     uint256 public start;
@@ -116,7 +116,7 @@ contract PGOMonthlyInternalVault {
             // after cliff -> 1/27 of totalBalance every month, must skip first 9 month 
             uint256 totalBalance = investments[investmentIndex].totalBalance;
             uint256 monthlyBalance = totalBalance.div(VESTING_DIV_RATE);
-            uint256 daysToSkip = 270 days;
+            uint256 daysToSkip = 90 days;
             uint256 time = block.timestamp.sub(start).sub(daysToSkip);
             uint256 elapsedOffsets = time.div(VESTING_OFFSETS);
             uint vestedToSum = elapsedOffsets.mul(monthlyBalance);

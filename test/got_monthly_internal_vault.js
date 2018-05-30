@@ -1,10 +1,6 @@
 import {expectThrow, waitNDays, getEvents, BigNumber, increaseTimeTo} from './helpers/tools';
 import {logger as log} from "./helpers/logger";
 
-/*const {ecsign} = require('ethereumjs-util');
-const abi = require('ethereumjs-abi');
-const BN = require('bn.js');*/
-
 const GotCrowdSale = artifacts.require('./GotCrowdSale.sol');
 const PGOMonthlyInternalVault = artifacts.require('./PGOMonthlyInternalVault.sol');
 const GotToken = artifacts.require('./GotToken.sol');
@@ -14,46 +10,15 @@ const should = require('chai') // eslint-disable-line
     .use(require('chai-bignumber')(BigNumber))
     .should();
 
-// Values for testing buy methods with the required MAX_AMOUNT by Eidoo's KYCBase contract
-/*const SIGNER_PK = Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex');
-const SIGNER_ADDR = '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase();
-const OTHER_PK = Buffer.from('0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1', 'hex');
-const OTHER_ADDR = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef'.toLowerCase();
-const MAX_AMOUNT = '1000000000000000000';
-
-const getKycData = (userAddr, userid, icoAddr, pk) => {
-  // sha256("Eidoo icoengine authorization", icoAddress, buyerAddress, buyerId, maxAmount);
-  const hash = abi.soliditySHA256(
-    [ 'string', 'address', 'address', 'uint64', 'uint' ],
-    [ 'Eidoo icoengine authorization', icoAddr, userAddr, new BN(userid), new BN(MAX_AMOUNT) ]
-  );
-  const sig = ecsign(hash, pk);
-  return {
-    id: userid,
-    max: MAX_AMOUNT,
-    v: sig.v,
-    r: '0x' + sig.r.toString('hex'),
-    s: '0x' + sig.s.toString('hex')
-  }
-};*/
-
-const USD_PER_TOKEN = 1;
-const USD_PER_ETHER = 700;
-const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     
-
 const VAULT_START_TIME = 1530003801;      // 26 June 2018 09:00:00 GMT
 
 contract('PGOMonthlyInternalVault',(accounts) => {
-    const owner = accounts[0];
-    const activeInvestor = accounts[1];
     const beneficiary1 = accounts[6];
     const beneficiary1_balance = new BigNumber(2.5e7 * 1e18);
-
 
     // Provide gotTokenInstance for every test case
     let gotTokenInstance;
     let gotCrowdSaleInstance;
-    //let pgoVaultInstance;
     let pgoMonthlyInternalVaultInstance;
 
     beforeEach(async () => {
@@ -84,7 +49,7 @@ contract('PGOMonthlyInternalVault',(accounts) => {
         log.info('[ Finalized ]');
     });
 
-    it('should check unlocked tokens before 9 month are 0', async () => {
+    it('should check unlocked tokens before 3 months are 0', async () => {
         let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
         let vaultBalance = await gotTokenInstance.balanceOf(pgoMonthlyInternalVaultInstance.address);
 
@@ -98,26 +63,22 @@ contract('PGOMonthlyInternalVault',(accounts) => {
         await expectThrow(pgoMonthlyInternalVaultInstance.release(beneficiary1));
     });
 
-    it('should check 1/27 of token are unlocked after 10 month ', async () => {
-
+    it('should check 1/21 of token are unlocked after 4 months', async () => {
         BigNumber.config({DECIMAL_PLACES:0});
 
-        await waitNDays(300);
+        await waitNDays(120);
         await pgoMonthlyInternalVaultInstance.release(beneficiary1);
 
         let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
 
         log.info(beneficiary1Balance);
 
-        let div27BeneficiaryBalance = beneficiary1_balance.dividedBy(27);
+        let div21BeneficiaryBalance = beneficiary1_balance.dividedBy(21);
         
-        div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
-
-        
+        div21BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
     });
 
-    it('should check 2/27 of token are unlocked after 11 month ', async () => {
-
+    it('should check 2/21 of token are unlocked after 5 months', async () => {
         BigNumber.config({DECIMAL_PLACES:0});
 
         await waitNDays(30);
@@ -127,19 +88,18 @@ contract('PGOMonthlyInternalVault',(accounts) => {
 
         log.info(beneficiary1Balance);
 
-        let div27BeneficiaryBalance = beneficiary1_balance.dividedBy(27);
-        div27BeneficiaryBalance = div27BeneficiaryBalance.mul(2);
+        let div21BeneficiaryBalance = beneficiary1_balance.dividedBy(21);
+        div21BeneficiaryBalance = div21BeneficiaryBalance.mul(2);
 
-        div27BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
-
-        
+        div21BeneficiaryBalance.should.be.bignumber.equal(beneficiary1Balance);
     });
 
     it('should release all token after vault end ', async () => {
-
         BigNumber.config({DECIMAL_PLACES:0});
-        let days = 30*36; 
-        let endTime = VAULT_START_TIME + (days * 24 * 60 * 60);
+
+        const days = 30*24;
+        const endTime = VAULT_START_TIME + (days * 24 * 60 * 60);
+
         await increaseTimeTo(endTime);
         
         await pgoMonthlyInternalVaultInstance.release(beneficiary1);
@@ -147,7 +107,5 @@ contract('PGOMonthlyInternalVault',(accounts) => {
         let beneficiary1Balance = await gotTokenInstance.balanceOf(beneficiary1);
 
         beneficiary1_balance.should.be.bignumber.equal(beneficiary1Balance);
-
-        
     });
 });

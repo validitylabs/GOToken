@@ -16,8 +16,8 @@ import "./ICOEngineInterface.sol";
 
 contract CrowdsaleBase is Pausable, CanReclaimToken, ICOEngineInterface, KYCBase {
     /*** CONSTANTS ***/
-    uint256 public constant USD_PER_TOKEN = 1;                        //
-    uint256 public constant USD_PER_ETHER = 700;                      // @TODO: adjust on deployment date
+    uint256 public constant USD_PER_TOKEN = 75;                       // 0.75$
+    uint256 public constant USD_PER_ETHER = 60000;                    // 600$
 
     uint256 public start;                                             // ICOEngineInterface
     uint256 public end;                                               // ICOEngineInterface

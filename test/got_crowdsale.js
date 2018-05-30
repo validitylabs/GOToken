@@ -15,9 +15,6 @@ const should = require('chai') // eslint-disable-line
 
 // Values for testing buy methods with the required MAX_AMOUNT by Eidoo's KYCBase contract
 const SIGNER_PK = Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex');
-const SIGNER_ADDR = '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase();
-const OTHER_PK = Buffer.from('0dbbe8e4ae425a6d2687f1a7e3ba17bc98c673636790f1b8ad91193c05875ef1', 'hex');
-const OTHER_ADDR = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef'.toLowerCase();
 const MAX_AMOUNT = '7000000000000000000000';
 
 const getKycData = (userAddr, userid, icoAddr, pk) => {
@@ -40,8 +37,8 @@ const CROWDSALE_START_TIME = 1528794000;                                    // 1
 const CROWDSALE_END_TIME = 1530003600;                                      // 26 June 2018 09:00:00 GMT
 
 
-const USD_PER_TOKEN = 1;
-const USD_PER_ETHER = 700;
+const USD_PER_TOKEN = 0.75;
+const USD_PER_ETHER = 600;
 const TOKEN_PER_ETHER =  USD_PER_ETHER / USD_PER_TOKEN;                     // 700 GOT tokens per ether
 
 /*INVESTORS DATA*/
@@ -195,14 +192,6 @@ contract('GotCrowdSale',(accounts) => {
         const totalMintedSupply = await gotTokenInstance.totalSupply();
         const totalSupply = totalMintedSupply.add(remainingTokens);
 
-        logger.info(totalSupply);
-        logger.info(internalVaultBalance);
-        logger.info(presaleVaultBalance);
-        logger.info(pgoVaultBalance);
-        logger.info(unlockedLiquidity);
-        logger.info(tokensSold);
-        logger.info(remainingTokens);
-
         totalMintedSupply.should.be.bignumber.equal(
             internalVaultBalance        // 25mil
             .plus(presaleVaultBalance)  // 13.5 mil
@@ -266,10 +255,6 @@ contract('GotCrowdSale',(accounts) => {
         const activeInvestor2Balance2 = await gotTokenInstance.balanceOf(activeInvestor2);
 
         activeInvestor2Balance.should.be.bignumber.lessThan(activeInvestor2Balance2);
-
-        const availableTokens = await gotCrowdSaleInstance.availableTokens();
-
-        logger.info(availableTokens.c);
     });
 
     it('should set capReached to true after big purchase', async () => {
@@ -342,9 +327,7 @@ contract('GotCrowdSale',(accounts) => {
 
     it('should allow transfer of tokens after ICO ended', async () => {
         const activeInvestor1Balance1 = await gotTokenInstance.balanceOf(activeInvestor1);
-        logger.info(activeInvestor1Balance1.c);
         const activeInvestor3Balance1 = await gotTokenInstance.balanceOf(activeInvestor3);
-        logger.info(activeInvestor3Balance1.c);
 
         await gotTokenInstance.transfer(activeInvestor3, 1, {from: activeInvestor1});
 

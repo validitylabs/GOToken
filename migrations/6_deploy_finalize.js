@@ -9,6 +9,9 @@ module.exports = function(deployer, network, accounts) {
     const internalWallet = accounts[6];
     const presaleWallet = accounts[5];
     const reservationWallet = accounts[4];
+
+    //The lists of addresses and expected token amounts will be loaded here at ICO deploy time
+
     //Initialize internal addresses
     const internalAddresses = [internalWallet];
     const internalBalances = [new BigNumber(2.5e7 * 1e18)];

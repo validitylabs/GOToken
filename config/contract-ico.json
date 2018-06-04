@@ -1,10 +1,10 @@
 {
     "tests": [
-        "test/got_crowdsale.js",
-        "test/got_monthly_internal_vault.js",
-        "test/got_monthly_presale_vault.js",
-        "test/got_pgovault.js",
-        "test/got_token.js"
+        "test/contracts/got_crowdsale.js",
+        "test/contracts/got_monthly_internal_vault.js",
+        "test/contracts/got_monthly_presale_vault.js",
+        "test/contracts/got_pgovault.js",
+        "test/contracts/got_token.js"
     ],
     "networks": {
         "rinkeby": {

@@ -8,11 +8,10 @@ module.exports = function(deployer, network, accounts) {
     const unlockedLiquidityWallet = accounts[8];
     const wallet = accounts[7];
     const kycSigners = ['0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase()];
-    const gotTokenInstance = Got.deployed();
 
     deployer.deploy(
         GotCrowdSale,
-        gotTokenInstance.address,
+        Got.address,
         wallet,
         lockedLiquidityWallet,
         unlockedLiquidityWallet,

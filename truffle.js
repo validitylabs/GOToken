@@ -11,6 +11,11 @@ require('babel-polyfill');
 const network   = process.env.NETWORK;
 let secrets     = '';
 
+// If possible, Infura shouldn't be used anymore
+if (network === 'rinkebyInfura') {
+    secrets = require('./config/.secrets.json');
+}
+
 const path      = require('path');
 const basePath  = process.cwd();
 
@@ -49,7 +54,8 @@ module.exports = {
             port:       cnf.networks.coverage.port,
             gas:        cnf.networks.coverage.gas,
             gasPrice:   cnf.networks.coverage.gasPrice
-        }
+        },
+        rinkebyInfura:  getRinkebyConfig()
     },
     build_directory:            buildDir,            // eslint-disable-line
     contracts_build_directory:  buildDirContracts,   // eslint-disable-line
@@ -57,3 +63,19 @@ module.exports = {
     contracts_directory:        srcDir,              // eslint-disable-line
     test_directory:             testDir              // eslint-disable-line
 };
+
+function getRinkebyConfig() {
+    let rinkebyProvider = '';
+
+    if (network === 'rinkebyInfura') {
+        rinkebyProvider = new HDWalletProvider(secrets.rinkeby.mnemonic, secrets.rinkeby.host);
+
+        return {
+            network_id: cnf.networks.rinkeby.chainId, // eslint-disable-line
+            provider:   rinkebyProvider,
+            from:       rinkebyProvider.getAddress(),
+            gas:        cnf.networks.rinkeby.gas,
+            gasPrice:   cnf.networks.rinkeby.gasPrice
+        };
+    }
+}

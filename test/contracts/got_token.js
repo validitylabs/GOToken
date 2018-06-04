@@ -1,5 +1,5 @@
-import {expectThrow, getEvents, BigNumber} from './helpers/tools';
-import {logger} from "./helpers/logger";
+import {expectThrow, getEvents, BigNumber} from '../helpers/tools';
+import {logger} from "../helpers/logger";
 
 const should = require('chai') // eslint-disable-line
     .use(require('chai-as-promised'))

@@ -1,5 +1,5 @@
-import {expectThrow, waitNDays,increaseTimeTo, getEvents, BigNumber} from './helpers/tools';
-import {logger as log} from "./helpers/logger";
+import {expectThrow, waitNDays,increaseTimeTo, getEvents, BigNumber} from '../helpers/tools';
+import {logger as log} from "../helpers/logger";
 
 const GotCrowdSale = artifacts.require('./GotCrowdSale.sol');
 const GotToken = artifacts.require('./GotToken.sol');

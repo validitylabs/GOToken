@@ -1,5 +1,5 @@
-import {expectThrow, getEvents, BigNumber, increaseTimeTo} from './helpers/tools';
-import {logger} from "./helpers/logger";
+import {expectThrow, getEvents, BigNumber, increaseTimeTo} from '../helpers/tools';
+import {logger} from "../helpers/logger";
 
 const {ecsign} = require('ethereumjs-util');
 const abi = require('ethereumjs-abi');

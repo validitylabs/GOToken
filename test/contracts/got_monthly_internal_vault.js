@@ -1,5 +1,5 @@
-import {expectThrow, waitNDays, getEvents, BigNumber, increaseTimeTo} from './helpers/tools';
-import {logger as log} from "./helpers/logger";
+import {expectThrow, waitNDays, getEvents, BigNumber, increaseTimeTo} from '../helpers/tools';
+import {logger as log} from "../helpers/logger";
 
 const GotCrowdSale = artifacts.require('./GotCrowdSale.sol');
 const PGOMonthlyInternalVault = artifacts.require('./PGOMonthlyInternalVault.sol');

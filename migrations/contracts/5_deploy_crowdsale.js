@@ -9,8 +9,6 @@ module.exports = function(deployer, network, accounts) {
     const wallet = accounts[7];
     const kycSigners = ['0x627306090abaB3A6e1400e9345bC60c78a8BEf57'.toLowerCase()];
     const gotTokenInstance = Got.deployed();
-    const pgoInternalInstance = PGOMonthlyInternalVault.deployed();
-    const pgoPresaleInstance = PGOMonthlyPresaleVault.deployed();
 
     deployer.deploy(
         GotCrowdSale,
@@ -18,8 +16,8 @@ module.exports = function(deployer, network, accounts) {
         wallet,
         lockedLiquidityWallet,
         unlockedLiquidityWallet,
-        pgoInternalInstance.address,
-        pgoPresaleInstance.address,
+        PGOMonthlyInternalVault.address,
+        PGOMonthlyPresaleVault.address,
         kycSigners)
         .then(function(){
             return GotCrowdSale.deployed().then(function(gotCrowdSaleInstance){
